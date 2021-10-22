@@ -8,7 +8,10 @@
 
 .list{
   overflow-y: auto;
-  height: calc(100% - 61px);
+  height: calc(100% - 63px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid transparent;
 }
 
 .wrapper{
@@ -48,4 +51,28 @@
 
 .rotated{
   color: rgba(0,0,0,0.7);
+}
+
+.empty{
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.emptyTitle{
+  font-size: 20px;
+  padding: 1em;
+  font-weight: 500;
+  color: rgba(0,0,0,0.6);
+  letter-spacing: 0.6px;
+}
+
+.emptyDescription{
+  font-size: 15px;
+  padding: 0.5em;
+  font-weight: 500;
+  color: rgba(0,0,0,0.6);
+  letter-spacing: 0.3px;
 }

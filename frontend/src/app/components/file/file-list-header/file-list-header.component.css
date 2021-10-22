@@ -1,3 +1,7 @@
+:host{
+  display: block;
+}
+
 .main{
   line-height: 40px;
   font-weight: 500;

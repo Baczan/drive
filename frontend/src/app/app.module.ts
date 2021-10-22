@@ -47,6 +47,7 @@ import {MatBadgeModule} from "@angular/material/badge";
 import { FileZipItemComponent } from './components/file/file-transfer-sheet/file-zip-item/file-zip-item.component';
 import {DragulaModule} from "ng2-dragula";
 import {NgxDropzoneModule} from "ngx-dropzone";
+import { DropzoneDirective } from './directives/dropzone.directive';
 
 
 const routes: Routes = [
@@ -81,7 +82,8 @@ const routes: Routes = [
     IconPipe,
     FileTransferSheetComponent,
     FileUploadingItemComponent,
-    FileZipItemComponent
+    FileZipItemComponent,
+    DropzoneDirective
   ],
   imports: [
     BrowserModule,

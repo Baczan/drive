@@ -49,7 +49,9 @@ export class FileComponent implements OnInit, AfterViewInit {
   }
 
 
-  fileInputClick(event: Event) {
+  fileInputClick(event: any) {
+
+    console.log(event)
 
     // @ts-ignore
     let fileList: FileList = event.target.files;
@@ -59,7 +61,10 @@ export class FileComponent implements OnInit, AfterViewInit {
       this.fileService.uploadFile(fileList.item(i));
     }
 
+    //event.dataTransfer.items.clear()
+
     this.fileInput.value = "";
+    
   }
 
   createFolder() {
@@ -82,6 +87,10 @@ export class FileComponent implements OnInit, AfterViewInit {
 
   badgeNumber():number{
     return this.fileService.uploading.filter(fileUploading=>!fileUploading.seen).length + this.fileService.currentZipFiles.filter(zipFile=>!zipFile.seen).length;
+  }
+
+  fileDropped(files:any){
+
   }
 }
 

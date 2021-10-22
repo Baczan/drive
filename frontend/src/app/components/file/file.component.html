@@ -31,9 +31,9 @@
     </div>
 
 
-    <div  class="list">
+    <div  class="list" appDropzone>
       <app-file-list-header ></app-file-list-header>
-      <div >
+      <div *ngIf="fileService.folders.length>0 || fileService.files.length > 0 || fileService.currentFolder" >
 
         <app-file-list-item-folder *ngIf="fileService.currentFolder" [folder]="fileService.currentFolder" [returnFolder]="true"></app-file-list-item-folder>
 
@@ -43,6 +43,17 @@
         <app-file-list-item-file *ngFor="let file of fileService.files;let i = index" [index]="i+fileService.folders.length" [file]="file">
 
         </app-file-list-item-file>
+
+      </div>
+
+      <div *ngIf="!fileService.currentFolder && fileService.folders.length == 0 && fileService.files.length == 0" class="empty">
+
+        <div class="emptyTitle">
+          Dodaj pliki
+        </div>
+        <div class="emptyDescription">
+          Przeciągnij pliki lub użyj przycisku +
+        </div>
 
       </div>
     </div>
