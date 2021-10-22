@@ -321,5 +321,48 @@ export class FileService {
     this.files.sort((a, b) => (a.date > b.date) ? 1 : -1);
   }
 
+
+  delete(){
+
+    this.selectedFiles.forEach(file=>{
+      this.deleteFile(file)
+    })
+
+    this.selectedFiles = [];
+
+    this.selectedFolders.forEach(folder=>{
+      this.deleteFolder(folder)
+    })
+
+    this.selectedFolders = [];
+
+  }
+
+  deleteFile(fileEntity:FileEntity) {
+
+    const url = `${environment.AUTHORIZATION_SERVER_URL}/api/file/deleteFile?fileId=${fileEntity.id}`
+
+    this.http.delete(url,{responseType:"text"}).subscribe(response=>{
+
+      this.files.splice(this.files.indexOf(fileEntity),1);
+    },error => {
+      console.log(error)
+    })
+
+  }
+
+  deleteFolder(folder:Folder){
+
+    const url = `${environment.AUTHORIZATION_SERVER_URL}/api/folder/deleteFolder?folderId=${folder.id}`
+
+    this.http.delete(url,{responseType:"text"}).subscribe(response=>{
+
+      this.folders.splice(this.folders.indexOf(folder),1);
+    },error => {
+      console.log(error)
+    })
+
+  }
+
 }
 

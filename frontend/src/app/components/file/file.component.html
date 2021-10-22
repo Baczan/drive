@@ -8,6 +8,12 @@
         </mat-icon>
       </button>
 
+      <button *ngIf="displayDownload()" (click)="fileService.delete()" mat-icon-button>
+        <mat-icon class="icon">
+          delete
+        </mat-icon>
+      </button>
+
       <button [matMenuTriggerFor]="menu" mat-icon-button>
         <mat-icon class="icon">
           add

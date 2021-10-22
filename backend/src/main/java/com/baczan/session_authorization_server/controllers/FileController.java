@@ -362,4 +362,30 @@ public class FileController {
 
     }
 
+    @DeleteMapping("/deleteFile")
+    public ResponseEntity<?> deleteFile(@RequestParam UUID fileId, Authentication authentication){
+
+        Optional<FileEntity> optionalFile = fileRepository.findById(fileId);
+
+        if (optionalFile.isEmpty()) {
+            return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
+        }
+
+        FileEntity fileEntity = optionalFile.get();
+
+        if (!fileEntity.getUser().equals(authentication.getName())) {
+            return new ResponseEntity<>("UNAUTHORIZED", HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            fileService.deleteFile(fileEntity);
+
+            return new ResponseEntity<>("deleted", HttpStatus.OK);
+
+        } catch (IOException e) {
+            return new ResponseEntity<>("io_exception", HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
 }

@@ -87,6 +87,17 @@ public class FileService {
         return fileEntity;
     }
 
+    public void deleteFile(FileEntity fileEntity) throws IOException {
+
+        Files.deleteIfExists(getPath(fileEntity));
+
+        if(fileEntity.isHasThumbnail()){
+            Files.deleteIfExists(getPathThumbnail(fileEntity));
+        }
+
+        fileRepository.delete(fileEntity);
+    }
+
     private void createThumbnail(FileEntity fileEntity) throws IOException {
 
         BufferedImage srcImage = ImageIO.read(getPath(fileEntity).toFile());
