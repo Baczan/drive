@@ -1,0 +1,51 @@
+<div class="main">
+
+  <div (click)="changeSorting('name')" [style.display]="widthService.nameDisplay" class="item name">
+
+    <div>
+      Nazwa
+    </div>
+
+    <mat-icon *ngIf="fileService.currentSort=='name' && fileService.sortDirection=='asc'" class="icon">
+      arrow_downward
+    </mat-icon>
+
+    <mat-icon *ngIf="fileService.currentSort=='name' && fileService.sortDirection=='desc'" class="icon">
+      arrow_upward
+    </mat-icon>
+
+  </div>
+
+  <div (click)="changeSorting('size')" [style.display]="widthService.sizeDisplay" class="item size">
+
+    <div>
+      Rozmiar
+    </div>
+
+    <mat-icon *ngIf="fileService.currentSort=='size' && fileService.sortDirection=='asc'" class="icon">
+      arrow_downward
+    </mat-icon>
+
+    <mat-icon *ngIf="fileService.currentSort=='size' && fileService.sortDirection=='desc'" class="icon">
+      arrow_upward
+    </mat-icon>
+
+  </div>
+
+  <div (click)="changeSorting('date')" [style.display]="widthService.dateDisplay" class="item date">
+
+    <div>
+      Data dodania
+    </div>
+
+    <mat-icon *ngIf="fileService.currentSort=='date' && fileService.sortDirection=='asc'" class="icon">
+      arrow_downward
+    </mat-icon>
+
+    <mat-icon *ngIf="fileService.currentSort=='date' && fileService.sortDirection=='desc'" class="icon">
+      arrow_upward
+    </mat-icon>
+
+  </div>
+
+</div>

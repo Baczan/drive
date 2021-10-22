@@ -1,0 +1,28 @@
+<div class="main">
+
+  <div class="wrapper">
+
+    <div class="text" [class.error]="zipInfo.error">
+      <span *ngIf="zipInfo.error">Błąd kompresowania: </span>files-{{zipInfo.date | date:'yyyy-MM-dd HH-mm-ss'}}.0.zip
+    </div>
+
+    <mat-progress-bar *ngIf="zipInfo.progress!=1 && !zipInfo.error" [value]="zipInfo.progress * 100"></mat-progress-bar>
+    <mat-progress-bar *ngIf="zipInfo.progress==1 && !zipInfo.error" mode="indeterminate"></mat-progress-bar>
+    <div [class.error]="zipInfo.error" *ngIf="zipInfo.error">
+      <mat-progress-bar  value="100"></mat-progress-bar>
+    </div>
+
+
+
+  </div>
+
+  <div  *ngIf="!zipInfo.completed " >
+
+    <button (click)="cancelDownloading()" [class.error]="zipInfo.error" class="cancelButton" mat-icon-button>
+      <mat-icon>close</mat-icon>
+    </button>
+
+  </div>
+
+</div>
+

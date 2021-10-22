@@ -1,0 +1,45 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="files/styleAct.css">
+    <link rel="stylesheet" href="../public/files/styleAct.css">
+</head>
+
+<body>
+
+<div class="wrapper">
+
+    <div class="main elevation" t>
+
+        <div th:if="${error==null}">
+            Twoje konto zostało aktywowane.
+            <br>
+            Możesz się teraz zalogować.
+
+            <a href="/login" class="loginButton social">
+                PRZEJDŹ DO LOGOWANIA
+            </a>
+
+        </div>
+
+
+        <div th:if="${error!=null}" class="error">
+            Wystąpił błąd podczas próby aktywacji twojego konta.
+
+
+            <a href="/login" class="loginButton social">
+                PRZEJDŹ DO LOGOWANIA
+            </a>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

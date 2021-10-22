@@ -1,0 +1,27 @@
+<div class="main">
+
+  <div class="wrapper">
+
+    <div class="text" [class.error]="fileUploading.error">
+      <span *ngIf="fileUploading.error">Błąd przesyłania: </span>{{fileUploading.filename}}
+    </div>
+
+    <mat-progress-bar *ngIf="fileUploading.progress!=1 && !fileUploading.error" [value]="fileUploading.progress * 100"></mat-progress-bar>
+    <mat-progress-bar *ngIf="fileUploading.progress==1 && !fileUploading.error" mode="indeterminate"></mat-progress-bar>
+    <div [class.error]="fileUploading.error" *ngIf="fileUploading.error">
+      <mat-progress-bar  value="100"></mat-progress-bar>
+    </div>
+
+
+
+  </div>
+
+  <div  *ngIf="!fileUploading.completed " >
+
+    <button (click)="cancelUploading()" [class.error]="fileUploading.error" class="cancelButton" mat-icon-button>
+      <mat-icon>close</mat-icon>
+    </button>
+
+  </div>
+
+</div>

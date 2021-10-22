@@ -1,0 +1,31 @@
+.main{
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.innerWrapper{
+  height: 100%;
+  background-color: white;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.title{
+  text-align: center;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  color: rgba(0,0,0,0.8);
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.2)
+}
+
+.content{
+  flex: 1;
+  height: 100%;
+}
+

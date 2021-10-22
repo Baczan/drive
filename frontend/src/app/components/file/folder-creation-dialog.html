@@ -1,0 +1,19 @@
+<div class="title">Nowy folder</div>
+
+<div mat-dialog-content>
+  <mat-form-field floatLabel="never">
+    <input placeholder="Nazwa folderu" matInput [formControl]="folderNameControl">
+    <mat-error *ngIf="folderNameControl.hasError('required') && folderNameControl.touched">
+      Wymagane
+    </mat-error>
+
+    <mat-error *ngIf="folderNameControl.hasError('notUnique') && folderNameControl.touched">
+      Folder o takiej nazwie już istnieje
+    </mat-error>
+
+  </mat-form-field>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()">Anuluj</button>
+  <button mat-button (click)="createFolder()" [disabled]="creatingFolder" cdkFocusInitial>Ok</button>
+</div>

@@ -1,0 +1,62 @@
+<div class="wrapper">
+  <div class="main mat-elevation-z2">
+    <div class="toolbar">
+
+      <button *ngIf="displayDownload()" (click)="fileService.download()" mat-icon-button>
+        <mat-icon class="icon">
+          file_download
+        </mat-icon>
+      </button>
+
+      <button [matMenuTriggerFor]="menu" mat-icon-button>
+        <mat-icon class="icon">
+          add
+        </mat-icon>
+      </button>
+
+      <button *ngIf="fileService.currentZipFiles.length>0 || fileService.uploading.length>0" (click)="openBottomSheet()" mat-icon-button>
+        <mat-icon [matBadge]="badgeNumber()" [matBadgeHidden]="badgeNumber()==0" matBadgeSize="small" matBadgeColor="accent" class="icon rotated">
+          autorenew
+        </mat-icon>
+      </button>
+
+
+
+    </div>
+
+
+    <div  class="list">
+      <app-file-list-header ></app-file-list-header>
+      <div >
+
+        <app-file-list-item-folder *ngIf="fileService.currentFolder" [folder]="fileService.currentFolder" [returnFolder]="true"></app-file-list-item-folder>
+
+        <app-file-list-item-folder  *ngFor="let folder of fileService.folders;let i = index"
+                                    [folder]="folder" [index]="i"></app-file-list-item-folder>
+
+        <app-file-list-item-file *ngFor="let file of fileService.files;let i = index" [index]="i+fileService.folders.length" [file]="file">
+
+        </app-file-list-item-file>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<input #fileInput (change)="fileInputClick($event)" style="display: none" type="file" multiple>
+<mat-menu #menu>
+
+  <button (click)="fileInput.click()" mat-menu-item>
+    <mat-icon>attach_file</mat-icon>
+    <span>Plik</span>
+  </button>
+
+  <button (click)="createFolder()" mat-menu-item>
+    <mat-icon>folder</mat-icon>
+    <span>Folder</span>
+  </button>
+
+</mat-menu>

@@ -1,0 +1,41 @@
+<div (click)="select($event)" [class.activated]="isSelected()"  class="main">
+
+  <div [style.display]="widthService.nameDisplay" class="item name">
+
+    <div class="iconWrapper">
+
+      <mat-icon *ngIf="!file.hasThumbnail || !imageLoaded"  class="icon material-icons" [class.activated]="isSelected()">
+        {{file.filename | icon }}
+      </mat-icon>
+
+      <img (load)="imageLoaded=true" *ngIf="file.hasThumbnail" [style.display]="imageLoaded?'block':'none'" [src]="getSrc()">
+
+    </div>
+
+
+      <div class="nameText">
+        {{file.filename}}
+      </div>
+
+
+
+  </div>
+
+  <div [style.display]="widthService.sizeDisplay" class="item size lineWrapper">
+
+    <div>
+      {{file.size | filesize}}
+    </div>
+
+  </div>
+
+  <div [style.display]="widthService.dateDisplay" class="item date lineWrapper">
+
+    <div>
+      {{file.date | date}}
+    </div>
+
+  </div>
+
+</div>
+

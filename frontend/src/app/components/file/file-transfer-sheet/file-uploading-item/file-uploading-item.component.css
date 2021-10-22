@@ -1,0 +1,35 @@
+.main{
+  display: flex;
+  padding-top: 24px;
+}
+
+.wrapper{
+  flex: 1;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.text{
+  padding-bottom: 12px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  padding-right: 16px;
+  font-size: 15px;
+}
+
+.cancelButton{
+  margin-top: 3px;
+  margin-left: 20px;
+}
+
+.title{
+  padding-bottom: 12px;
+}
+
+.error{
+  color: #f44336;
+}
+
+::ng-deep .error .mat-progress-bar-fill::after {
+  background-color: #f44336;
+}

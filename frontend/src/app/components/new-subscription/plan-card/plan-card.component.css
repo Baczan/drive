@@ -1,0 +1,49 @@
+
+.main{
+  display: inline-block;
+  box-sizing: border-box;
+  padding: 32px 16px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.card{
+  border-radius: 5px;
+  padding-bottom: 1em;
+  overflow-x: hidden;
+  max-width: 215px;
+  margin: auto;
+  color: rgba(0,0,0,0.7);
+}
+
+.title{
+  padding: 1.3em 2em 1em;
+}
+
+.size{
+  padding: 0.3em 2em 1em;
+}
+
+.price{
+  padding: 0.3em 2em 1em;
+}
+
+.chooseButton{
+  padding: 0.6em;
+  margin: 0.5em 2.5em;
+  color: white;
+  background-color: rgb(63, 81, 181);
+  border-radius: 100px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.chooseButton:hover{
+  background-color: rgb(53, 70, 165);
+}
+
+.current{
+  padding: 0.6em;
+  margin: 0.5em 2.5em;
+  font-weight: 500;
+}

@@ -1,0 +1,51 @@
+.toolbar{
+  display: flex;
+  justify-content: end;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+  padding: 10px 0;
+}
+
+
+.list{
+  overflow-y: auto;
+  height: calc(100% - 61px);
+}
+
+.wrapper{
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+.main{
+  height: 100%;
+  max-width: 1200px;
+  flex: 1;
+  background-color: white;
+  box-sizing: border-box;
+  padding: 0 16px;
+  padding-bottom: 16px;
+  overflow-x: auto;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  background-color: transparent; }
+
+::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: rgba(0,0,0,0.2); }
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+  background-color: transparent;
+}
+
+
+.icon{
+  color: rgba(0,0,0,0.7);
+}
+
+.rotated{
+  color: rgba(0,0,0,0.7);
+}

@@ -1,0 +1,21 @@
+<div class="planWrapper mat-elevation-z2">
+  <div class="title">
+    {{name}}
+  </div>
+  <div class="size">
+    {{size}} GB
+  </div>
+  <div class="price">
+    {{price}}
+  </div>
+
+  <div *ngIf="current" class="current">
+    OBECNY
+  </div>
+
+  <button *ngIf="!current" (click)="clicked.emit()" mat-raised-button color="primary">
+    WYBIERZ
+  </button>
+</div>
+
+

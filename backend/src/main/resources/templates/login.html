@@ -1,0 +1,71 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="files/style.css">
+    <link rel="stylesheet" href="../public/files/style.css">
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        <form class="main elevation" th:action="@{/login}" method="post">
+
+            
+            <div th:if="${param.errorUsername==null}" class="label">
+                E-MAIL
+            </div>
+
+            <div th:if="${param.error}" class="label error">
+                E-MAIL
+                <span> - Niepoprawny email lub hasło </span>
+            </div>
+
+            <input type="text" id="username" name="username" autocomplete="email">
+
+            <div th:if="${param.error==null}" class="label">
+                HASŁO
+            </div>
+
+            <div th:if="${param.error}" class="label error">
+                HASŁO
+                <span> - Niepoprawny email lub hasło </span>
+            </div>
+
+            <input type="password" id="password" name="password" autocomplete="current-password">
+            <a href="/password_change_request" class="password">Nie pamiętasz hasła?</a>
+
+            <button class="loginButton">
+                ZALOGUJ SIĘ
+            </button>
+
+            <div class="registerWrapper">
+                Potrzebujesz konta?
+                <a href="/register">Zarejestruj się</a>
+            </div>
+
+            <div class="spacer">
+                <hr>
+                <span>LUB</span>
+                <hr>
+            </div>
+
+
+            <a href="/oauth2/authorization/google" class="loginButton social google">
+                Zaloguj się za pomocą Google
+            </a>
+
+            <a href="/oauth2/authorization/facebook" class="loginButton social facebook">
+                Zaloguj się za pomocą Facebook
+            </a>
+        </form>
+
+    </div>
+
+
+
+
+</body>
+
+</html>

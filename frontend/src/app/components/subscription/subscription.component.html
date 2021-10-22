@@ -1,0 +1,120 @@
+<!--
+<div class="main" *ngIf="!showSpinner()">
+
+  <div class="wrapper" *ngIf="!loading && !subscriptionModel">
+
+    <app-subscription-card name="Darmowy" size="5 GB" price="darmowy" [current]="true"></app-subscription-card>
+    <app-subscription-card (clicked)="createSubscription('basic')" name="Podstawowy" size="15 GB"
+                           price="4,99 zł miesięcznie"></app-subscription-card>
+    <app-subscription-card (clicked)="createSubscription('standard')" name="Standardowy" size="50 GB"
+                           price="9,99 zł miesięcznie"></app-subscription-card>
+    <app-subscription-card (clicked)="createSubscription('premium')" name="Premium" size="100 GB"
+                           price="19,99 zł miesięcznie"></app-subscription-card>
+
+  </div>
+
+  <div class="wrapper paySection"
+       *ngIf="!loading && subscriptionModel && subscriptionModel.subscriptionStatus=='incomplete'">
+
+    <div class="payWrapper">
+
+      <div class="radio" *ngIf="cards.length>0">
+
+        <div class="cardTitle">Sposób płatności:</div>
+        <mat-radio-group [formControl]="radioFromControl" [value]="">
+          <mat-radio-button *ngFor="let cardM of cards,let i = index" [value]="i">
+
+            <div class="radioMain">
+              <div class="radioWrapper">
+                <div class="cardNumber">
+                  {{cardM.brand | titlecase}}
+                  <div class="stars">
+                    ••••
+                  </div>
+                  {{cardM.last4}}
+                </div>
+                <div class="cardExp">
+                  Wygasa: {{cardM.expMonth}}/{{cardM.expYear.toString().substring(2, 4)}}
+                </div>
+              </div>
+              <div class="radioSpacer">
+
+              </div>
+              <div class="radioName">
+                {{cardM.name}}
+              </div>
+            </div>
+
+          </mat-radio-button>
+          <mat-radio-button  value="newCard">
+            <div class="cardNumber">
+              Nowa karta
+            </div>
+
+          </mat-radio-button>
+        </mat-radio-group>
+
+
+      </div>
+
+      <div *ngIf="cards.length==0 || radioFromControl.value=='newCard'">
+        <div class="cardTitle">
+          Dane karty
+        </div>
+
+        <ngx-stripe-card-group>
+
+          <ngx-stripe-card-number [options]="numberOptions"></ngx-stripe-card-number>
+
+          <div class="elementsWrapper">
+
+            <ngx-stripe-card-expiry class="elementsWrapperComponent" [options]="defaultOptions"></ngx-stripe-card-expiry>
+            <ngx-stripe-card-cvc class="elementsWrapperComponent" [options]="defaultOptions"></ngx-stripe-card-cvc>
+
+          </div>
+
+
+        </ngx-stripe-card-group>
+
+        <div class="nameWrapper">
+          <div class="cardTitle">
+            Imie i nazwisko na karcie
+          </div>
+
+          <input [formControl]="nameControl" type="text">
+        </div>
+      </div>
+
+
+      <button [disabled]="paying" (click)="pay()" mat-raised-button color="primary">
+        ZAPŁAĆ
+      </button>
+
+
+    </div>
+
+
+    <div class="cardDisplay">
+
+      <app-plan-details-card *ngIf="subscriptionModel.tier=='basic'" name="Podstawowy" size="15 GB"
+                             price="4,99 zł miesięcznie"></app-plan-details-card>
+
+      <app-plan-details-card *ngIf="subscriptionModel.tier=='standard'" name="Standardowy" size="50 GB"
+                             price="9,99 zł miesięcznie"></app-plan-details-card>
+
+      <app-plan-details-card *ngIf="subscriptionModel.tier=='premium'" name="Premium" size="100 GB"
+                             price="19,99 zł miesięcznie"></app-plan-details-card>
+
+      <button (click)="deleteSubscription()" class="cancelButton" mat-raised-button>
+        ZMIEŃ PLAN
+      </button>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="spinnerWrapper" *ngIf="showSpinner()">
+  <mat-spinner [strokeWidth]="4"></mat-spinner>
+</div>
+-->

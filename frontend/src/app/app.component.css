@@ -1,0 +1,60 @@
+:host {
+  height: 100%;
+  display: block;
+}
+
+header{
+  padding-left: 8px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+  position: relative;
+  white-space: nowrap;
+}
+
+header > span{
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: rgba(0,0,0,0.8);
+  padding-left: 8px;
+  line-height: 48px;
+  padding-bottom: 1px;
+}
+
+mat-drawer-container {
+  height: 100%;
+  box-sizing: border-box;
+
+}
+
+mat-drawer {
+  width: 256px;
+  padding-top: 2px;
+  padding-bottom: 16px;
+}
+
+.drawerWrapper{
+  height: calc(100% - 48px);
+  box-sizing: border-box;
+}
+
+mat-divider{
+  margin-top: 10px;
+  margin-bottom: 16px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+::ng-deep .mat-drawer-inner-container{
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.innerDrawerWrapper{
+  height: 100%;
+}
+

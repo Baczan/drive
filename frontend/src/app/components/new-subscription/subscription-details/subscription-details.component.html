@@ -1,0 +1,113 @@
+<div class="main" *ngIf="!selectingTier  && !changingTier">
+
+  <div class="details">
+
+    <div class="detail">
+
+      <div class="label">
+        ADRES E-MAIL
+      </div>
+
+      <div>
+        {{authService.user.email}}
+      </div>
+
+    </div>
+
+    <div class="detail">
+
+      <div class="label">
+        NASTĘPNA PŁATNOŚĆ
+      </div>
+
+      <div *ngIf="!paymentService.subscription.cancelAtPeriodEnd">
+        {{getDate()}} - {{paymentService.subscription.total / 100}}zł
+      </div>
+
+      <div class="dashWrapper" *ngIf="paymentService.subscription.cancelAtPeriodEnd">
+        <div class="dash"></div>
+      </div>
+
+    </div>
+
+    <div class="detail" *ngIf="paymentService.subscription.cancelAtPeriodEnd">
+
+      <div class="label">
+        WAŻNA DO
+      </div>
+
+      <div>
+        {{getDate()}}
+      </div>
+
+    </div>
+
+    <div class="detail">
+
+      <div class="label">
+        WYBRANA METODA PŁATNOŚCI
+      </div>
+
+      <div class="paymentInfo" *ngIf="getDefaultPaymentInfoIndex()!=-1">
+        <span class="brand">{{paymentService.cards[getDefaultPaymentInfoIndex()].brand | titlecase}}</span>
+
+        <span class="number">•••• •••• •••• &nbsp;{{paymentService.cards[getDefaultPaymentInfoIndex()].lastDigits}}</span>
+
+        <span class="name">{{paymentService.cards[getDefaultPaymentInfoIndex()].name}}</span>
+
+      </div>
+
+      <div *ngIf="getDefaultPaymentInfoIndex()==-1">
+        Brak
+      </div>
+
+
+    </div>
+  </div>
+
+
+  <div class="card">
+    <app-plan-details-card *ngIf="paymentService.subscription.tier=='basic'" name="Podstawowy" size="15 GB"
+                           price="4,99 zł miesięcznie"></app-plan-details-card>
+
+    <app-plan-details-card *ngIf="paymentService.subscription.tier=='standard'" name="Standardowy" size="50 GB"
+                           price="9,99 zł miesięcznie"></app-plan-details-card>
+
+    <app-plan-details-card *ngIf="paymentService.subscription.tier=='premium'" name="Premium" size="100 GB"
+                           price="19,99 zł miesięcznie"></app-plan-details-card>
+
+    <button (click)="selectingTier=true" [disabled]="changingState || paymentService.subscription.cancelAtPeriodEnd" class="cardButton" mat-raised-button>
+      ZMIEŃ PLAN
+    </button>
+
+    <button (click)="changeSubscriptionState(false)" [disabled]="changingState" *ngIf="!paymentService.subscription.cancelAtPeriodEnd" class="cancelButton cardButton" mat-raised-button>
+      ANULUJ SUBSKRYPCJE
+    </button>
+
+    <button (click)="changeSubscriptionState(true)" [disabled]="changingState" *ngIf="paymentService.subscription.cancelAtPeriodEnd" class="cardButton" color="primary" mat-raised-button>
+      WZNÓW SUBSKRYPCJE
+    </button>
+  </div>
+
+</div>
+
+<div class="cards" *ngIf="selectingTier && !changingTier">
+
+  <app-plan-card title="Podstawowy" [size]="15" price="4,99 zł miesięcznie"
+                 (tierChosen)="chooseTier('basic')" [current]="paymentService.subscription.tier=='basic'"></app-plan-card>
+  <app-plan-card title="Standardowy" [size]="50" price="9,99 zł miesięcznie"
+                 (tierChosen)="chooseTier('standard')" [current]="paymentService.subscription.tier=='standard'"></app-plan-card>
+  <app-plan-card title="Premium" [size]="100" price="19,99 zł miesięcznie"
+                 (tierChosen)="chooseTier('premium')" [current]="paymentService.subscription.tier=='premium'"></app-plan-card>
+
+  <div class="buttonWrapper">
+    <button (click)="selectingTier=false" class="cancelButton" mat-raised-button>
+      ANULUJ
+    </button>
+  </div>
+
+</div>
+
+<div class="spinnerWrapper" *ngIf="changingTier">
+    <mat-spinner [strokeWidth]="4"></mat-spinner>
+</div>

@@ -1,0 +1,24 @@
+<div class="main" [style.width]="getWidth()">
+  <div #card [style.font-size]="getButtonFontSize()" [style.line-height]="getButtonFontSize()" class="card mat-elevation-z2">
+    <div class="title" [style.font-size]="getTitleFontSize()" [style.line-height]="getTitleFontSize()">
+      {{title}}
+    </div>
+
+    <div class="size" [style.font-size]="getSizeFontSize()" [style.line-height]="getSizeFontSize()">
+      {{size}} GB
+    </div>
+
+    <div class="price" [style.font-size]="getPriceFontSize()" [style.line-height]="getPriceFontSize()">
+      {{price}}
+    </div>
+
+    <div (click)="tierChosen.emit()" *ngIf="!current" class="chooseButton mat-elevation-z1" [style.font-size]="getButtonFontSize()" [style.line-height]="getButtonFontSize()">
+      WYBIERZ
+    </div>
+
+    <div *ngIf="current" class="current" [style.font-size]="getCurrentFontSize()" [style.line-height]="getCurrentFontSize()">
+      OBECNY
+    </div>
+
+  </div>
+</div>

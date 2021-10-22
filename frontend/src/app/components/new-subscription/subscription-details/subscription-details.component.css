@@ -1,0 +1,101 @@
+:host{
+  height: 100%;
+}
+
+.main{
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card{
+  padding: 32px;
+  flex: 1;
+  max-width: 400px;
+  width: 100vw;
+}
+
+.cardButton{
+  margin-top: 24px;
+  width: 100%;
+}
+
+.cancelButton{
+  background-color: #dc4a4a;
+  color: white;
+}
+
+.details{
+  padding-top: 24px;
+  flex-wrap: wrap;
+}
+
+.label{
+  font-weight: 500;
+  padding-bottom: 6px;
+  font-size: 14px;
+}
+
+.detail{
+  font-size: 16px;
+  padding: 16px;
+  letter-spacing: 0.3px;
+}
+
+.dash{
+  border-top: 1px dashed rgba(0,0,0,0.6);
+  flex: 1;
+}
+
+.dashWrapper{
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand{
+  padding-right: 16px;
+  white-space: nowrap;
+}
+
+.number{
+  padding-right: 16px;
+  white-space: nowrap;
+}
+
+.name{
+  padding-right: 16px;
+  max-width: 270px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.paymentInfo{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  line-height: 40px;
+}
+
+.cards{
+  width: 100%;
+  height: fit-content;
+}
+
+.spinnerWrapper{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttonWrapper{
+  display: flex;
+  justify-content: center;
+  padding-top: 24px;
+}
+

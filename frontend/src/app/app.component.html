@@ -1,0 +1,32 @@
+<header class="mat-elevation-z1">
+  <button (click)="drawer.toggle()" mat-icon-button>
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <span>
+    Dysk
+  </span>
+</header>
+
+<div  #drawerWrapper class="drawerWrapper">
+  <mat-drawer-container [hasBackdrop]="hasBackdrop" #drawerContainer>
+
+    <mat-drawer (openedChange)="updateWidth()" [opened]="opened" [mode]="mode" mode="side" #drawer class="mat-elevation-z1">
+
+      <app-link icon="person" text="Konto" path="/account"></app-link>
+      <mat-divider></mat-divider>
+      <app-link icon="folder" text="Pliki" path="/files"></app-link>
+      <app-link icon="payment" text="Subskrypcja" path="/subscription"></app-link>
+      <div class="spacer"></div>
+      <app-link icon="logout" [logout]="true" text="Wyloguj się" path="/logout"></app-link>
+
+    </mat-drawer>
+
+    <mat-drawer-content>
+      <div #innerDrawerWrapper class="innerDrawerWrapper">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-drawer-content>
+  </mat-drawer-container>
+</div>
+

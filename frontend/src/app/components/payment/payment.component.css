@@ -1,0 +1,55 @@
+:host {
+  height: 100%;
+  display: block;
+}
+
+.wrapper{
+  padding: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.payWrapper{
+  width: 380px;
+  padding: 32px;
+}
+
+mat-form-field{
+  width: 100%;
+  font-size: 16px;
+}
+
+.elementsWrapper{
+  display: flex;
+}
+
+ngx-stripe-card-cvc{
+  display: block;
+  flex: 1;
+}
+
+ngx-stripe-card-expiry{
+  display: block;
+  flex: 1;
+}
+
+ngx-stripe-card-number{
+  display: block;
+  padding: 8px 12px;
+}
+
+ngx-stripe-card-group{
+  display: block;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 5px;
+}
+
+.elementsWrapperComponent{
+  border-top: 1px solid rgba(0,0,0,0.2);
+  padding: 8px 12px;
+}
+
+.elementsWrapperComponent:last-child{
+  border-left: 1px solid rgba(0,0,0,0.2);
+}

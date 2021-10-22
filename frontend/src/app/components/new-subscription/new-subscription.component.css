@@ -1,0 +1,162 @@
+.cards{
+  width: 100%;
+  height: fit-content;
+}
+
+.main{
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+
+}
+
+.spinnerWrapper{
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.elementsWrapper{
+  display: flex;
+}
+
+ngx-stripe-card-cvc{
+  display: block;
+  flex: 1;
+}
+
+ngx-stripe-card-expiry{
+  display: block;
+  flex: 1;
+}
+
+ngx-stripe-card-number{
+  display: block;
+  padding: 8px 12px;
+}
+
+ngx-stripe-card-group{
+  display: block;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 5px;
+}
+
+.elementsWrapperComponent{
+  border-top: 1px solid rgba(0,0,0,0.2);
+  padding: 8px 12px;
+}
+
+.elementsWrapperComponent:last-child{
+  border-left: 1px solid rgba(0,0,0,0.2);
+}
+
+.payment{
+  width: 380px;
+  padding: 32px;
+  flex-shrink: 0;
+}
+.cardTitle{
+  font-size: 16px;
+  font-weight: 500;
+  padding-bottom: 8px;
+  color: rgba(0,0,0,0.8);
+}
+
+.nameWrapper{
+  padding-top: 16px;
+}
+
+.nameWrapper > input{
+  width: 100%;
+  font-size: 18px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: 1px solid rgba(0,0,0,0.2) !important;
+  margin-bottom: 24px;
+  outline: none !important;
+}
+
+button{
+  height: 40px;
+  width: 100%;
+}
+
+.subscriptionInfo{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.cardDisplay{
+  padding: 32px;
+  flex: 1;
+  max-width: 400px;
+}
+
+.cancelButton{
+  margin-top: 24px;
+}
+
+mat-radio-button{
+  width: 100%;
+  padding: 10px 0;
+}
+
+.cardNumber{
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.9);
+  display: flex;
+  padding-left: 8px;
+  line-height: 22px;
+}
+
+.stars{
+  padding: 0 6px;
+}
+
+.cardExp{
+  padding-left: 8px;
+}
+
+.radioMain{
+  display: flex;
+}
+
+.radioName{
+  display: flex;
+  align-items: center;
+  font-size: 17px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.8);
+}
+
+.radioSpacer{
+  border-left: 1px solid rgba(0,0,0,0.2);
+  margin: 8px 24px;
+}
+
+.radio{
+  padding-bottom: 32px;
+}
+
+.spinnerButton{
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  background-color: rgba(0,0,0,0.2);
+}
+
+::ng-deep .spinnerButton  .mat-spinner circle {
+  stroke: rgba(0,0,0,0.3);
+}
+
+.subscriptionDetailWrapper{
+  height: 100%;
+  width: 100%;
+}

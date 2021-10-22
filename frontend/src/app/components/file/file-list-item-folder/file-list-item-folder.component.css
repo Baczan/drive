@@ -1,0 +1,64 @@
+.main{
+  line-height: 48px;
+  letter-spacing: 0.5px;
+  display: flex;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+  margin: 0 8px;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
+}
+
+.item{
+  flex: 1;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.size{
+  max-width: 200px;
+}
+
+.date{
+  max-width: 200px;
+}
+
+.lineWrapper{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.line{
+  border-top: 1px solid rgba(0,0,0,0.3);
+  max-width: 16px;
+}
+
+.name{
+  align-items: center;
+}
+
+.iconWrapper{
+  width: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon{
+  color: rgb(95, 99, 104);
+  margin-bottom: 4px;
+}
+
+.activated{
+  color: #1967d2;
+  background-color: rgb(232, 240, 254);
+}

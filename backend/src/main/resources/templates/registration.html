@@ -1,0 +1,84 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="files/styleReg.css">
+    <link rel="stylesheet" href="../public/files/styleReg.css">
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        <form class="main elevation" th:action="@{/register}" method="post">
+
+
+            <div th:if="${errorUsername=='usernameEmpty'}" class="label error">
+            E-MAIL
+            <span> - wymagane </span>
+            </div>
+
+            <div th:if="${errorUsername=='usernameAlreadyExists'}" class="label error">
+                E-MAIL
+                <span> - użytkownik o takim adresie e-mail już istnieje </span>
+            </div>
+
+            <div th:if="${errorUsername==null}" class="label">
+                E-MAIL
+            </div>
+
+            <input type="text" id="username" name="username" autocomplete="email" th:value="${username}">
+
+            <div th:if="${errorPassword=='passwordEmpty'}" class="label error">
+                HASŁO
+                <span> - wymagane </span>
+            </div>
+
+            <div th:if="${errorPassword=='validation'}" class="label error">
+                HASŁO
+                <span> - hasło musi mieć przynajmniej 8 znaków, zawierać małe i duże litery oraz liczbę  </span>
+            </div>
+
+            <div th:if="${errorPassword==null}"  class="label">
+                HASŁO
+            </div>
+
+            <input type="password" id="password" name="password" autocomplete="new-password" th:value="${password}">
+
+            <div th:if="${errorPasswordC=='passwordCEmpty'}" class="label error">
+                POTWIERDŹ HASŁO
+                <span> - wymagane </span>
+            </div>
+
+            <div th:if="${errorPasswordC=='match'}" class="label error">
+                POTWIERDŹ HASŁO
+                <span> - hasła się nie zgadzają </span>
+            </div>
+
+            <div th:if="${errorPasswordC==null}"  class="label">
+                POTWIERDŹ HASŁO
+            </div>
+
+            <input type="password" id="passwordC" name="passwordC" autocomplete="new-password" th:value="${passwordC}">
+
+
+            <button class="loginButton">
+                ZAREJESTRUJ SIĘ
+            </button>
+
+            <div class="registerWrapper">
+                Masz już konto? 
+                <a href="/login">Zaloguj się</a>
+            </div>
+
+            
+        </form>
+
+    </div>
+
+
+
+
+</body>
+
+</html>

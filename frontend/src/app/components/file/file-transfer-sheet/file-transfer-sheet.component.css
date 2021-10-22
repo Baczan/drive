@@ -1,0 +1,17 @@
+.main{
+  width: 100vw;
+  max-width: 600px;
+  min-height: 400px;
+  box-sizing: border-box;
+  padding: 20px 28px 32px;
+}
+
+.title{
+  font-size: 17px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.8);
+}
+
+.downloadSpacer{
+  padding-bottom: 24px;
+}

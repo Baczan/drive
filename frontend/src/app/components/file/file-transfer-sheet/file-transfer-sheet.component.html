@@ -1,0 +1,24 @@
+<div class="main">
+
+  <div *ngIf="fileService.currentZipFiles.length>0">
+    <div class="title">
+      Pobieranie plików
+    </div>
+
+    <app-file-zip-item *ngFor="let zipInfo of fileService.currentZipFiles" [zipInfo]="zipInfo"></app-file-zip-item>
+  </div>
+
+
+  <div *ngIf="fileService.uploading.length>0 && fileService.currentZipFiles.length>0" class="downloadSpacer"></div>
+
+  <div *ngIf="fileService.uploading.length>0">
+    <div class="title">
+      Przesyłanie plików
+    </div>
+
+    <app-file-uploading-item *ngFor="let fileUploading of fileService.uploading"
+                             [fileUploading]="fileUploading"></app-file-uploading-item>
+  </div>
+
+
+</div>

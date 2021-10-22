@@ -1,0 +1,43 @@
+.main{
+  line-height: 40px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.7);
+  letter-spacing: 0.5px;
+  display: flex;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+  margin: 0 8px;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
+}
+
+.item{
+  flex: 1;
+  align-items: center;
+}
+
+.item:hover{
+  color: rgba(0,0,0,0.9);
+  cursor: pointer;
+}
+
+.size{
+  max-width: 200px;
+}
+
+.date{
+  max-width: 200px;
+}
+
+.icon{
+  width: 18px;
+  font-size: 18px;
+  height: 18px;
+  margin-left: 6px;
+  margin-bottom: 3px;
+}
+
+
