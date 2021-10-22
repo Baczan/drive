@@ -40,6 +40,8 @@ export class FileService {
   currentZipFiles:ZipInfo[] = [];
   zipDeleted:EventEmitter<boolean> = new EventEmitter<boolean>();
 
+  dragging:boolean = false;
+
 
   constructor(private http: HttpClient, private websocket: WebsocketService, @Inject(DOCUMENT) private document: HTMLDocument) {
 

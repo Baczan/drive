@@ -64,7 +64,7 @@ export class FileComponent implements OnInit, AfterViewInit {
     //event.dataTransfer.items.clear()
 
     this.fileInput.value = "";
-    
+
   }
 
   createFolder() {

@@ -17,6 +17,7 @@ export class DropzoneDirective {
     evt.preventDefault();
     evt.stopPropagation();
     this.fileOver = true;
+    this.fileService.dragging = true;
   }
 
   // Dragleave listener
@@ -24,6 +25,7 @@ export class DropzoneDirective {
     evt.preventDefault();
     evt.stopPropagation();
     this.fileOver = false;
+    this.fileService.dragging = false;
   }
 
   // Drop listener
