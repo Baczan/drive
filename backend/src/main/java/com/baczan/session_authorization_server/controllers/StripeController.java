@@ -21,6 +21,7 @@ import com.stripe.model.*;
 import com.stripe.net.Webhook;
 import com.stripe.param.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,8 +45,6 @@ import java.util.stream.Collectors;
 @Controller
 public class StripeController {
 
-    String stripeKey = "sk_test_51JROoKBZFHL9NjRl3GVGsj4o3LnogD0dloynSMo2blPI77vMykrKxHYzXlY7hFA1VIeOqIAHGncayg32DF69O2Xi000Q4YpwRy";
-
     @Autowired
     private StripeService stripeService;
 
@@ -64,9 +63,12 @@ public class StripeController {
     @Autowired
     private SubscriptionRepository subscriptionRepository;
 
+    @Autowired
+    private Environment environment;
+
     @PostConstruct
     private void setStripeKey() {
-        Stripe.apiKey = stripeKey;
+        Stripe.apiKey = environment.getProperty("app.stripe.key");
         try {
             getEvents();
 
@@ -237,8 +239,9 @@ public class StripeController {
     @ResponseBody
     public ResponseEntity<?> events(@RequestBody String payload, HttpServletRequest request) {
 
+
         try {
-            Event event = Webhook.constructEvent(payload, request.getHeader("Stripe-Signature"), "whsec_LJS5TKgvjfJ2b7tRPnaDQ1R5R3dyKopj");
+            Event event = Webhook.constructEvent(payload, request.getHeader("Stripe-Signature"), environment.getProperty("whsec_LJS5TKgvjfJ2b7tRPnaDQ1R5R3dyKopj"));
 
             handleEvent(event);
             return new ResponseEntity<>("ok", HttpStatus.OK);
