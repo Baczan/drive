@@ -2,7 +2,7 @@
 
 <div mat-dialog-content>
   <mat-form-field floatLabel="never">
-    <input placeholder="Nazwa folderu" matInput [formControl]="folderNameControl">
+    <input placeholder="Nazwa folderu" matInput [formControl]="folderNameControl" appAutofocus >
     <mat-error *ngIf="folderNameControl.hasError('required') && folderNameControl.touched">
       Wymagane
     </mat-error>

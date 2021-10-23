@@ -49,6 +49,8 @@ import {DragulaModule} from "ng2-dragula";
 import {NgxDropzoneModule} from "ngx-dropzone";
 import { DropzoneDirective } from './directives/dropzone.directive';
 import {StorageSpaceGuard} from "./guards/storage-space.guard";
+import {A11yModule} from "@angular/cdk/a11y";
+import { AutofocusDirective } from './directives/autofocus.directive';
 
 
 const routes: Routes = [
@@ -84,7 +86,8 @@ const routes: Routes = [
     FileTransferSheetComponent,
     FileUploadingItemComponent,
     FileZipItemComponent,
-    DropzoneDirective
+    DropzoneDirective,
+    AutofocusDirective
   ],
   imports: [
     BrowserModule,
@@ -113,7 +116,8 @@ const routes: Routes = [
     MatProgressBarModule,
     MatBadgeModule,
     DragulaModule.forRoot(),
-    NgxDropzoneModule
+    NgxDropzoneModule,
+    A11yModule
   ],
   providers: [DatePipe,LoggedInGuard, {provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptorService, multi: true},SubscriptionGuard,StorageSpaceGuard],
   bootstrap: [AppComponent]

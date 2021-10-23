@@ -1,4 +1,13 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  Inject,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {FileService} from "../../services/file.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {FormControl, Validators} from "@angular/forms";
@@ -73,6 +82,7 @@ export class FileComponent implements OnInit, AfterViewInit {
 
     const dialogRef = this.dialog.open(FolderCreationDialogComponent, {
       width: "400px",
+      autoFocus: false
     });
 
 
@@ -102,6 +112,14 @@ export class FileComponent implements OnInit, AfterViewInit {
 })
 export class FolderCreationDialogComponent {
 
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+
+    if (event.key === "Enter") {
+      this.createFolder();
+    }
+
+  }
 
   folderNameControl: FormControl = new FormControl("", Validators.required);
   creatingFolder: boolean = false;
