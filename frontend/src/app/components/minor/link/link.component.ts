@@ -1,5 +1,6 @@
 import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {AuthService} from "../../../../modules/auth/services/auth.service";
+import {MatDrawer} from "@angular/material/sidenav";
 
 @Component({
   selector: 'app-link',
@@ -12,6 +13,7 @@ export class LinkComponent implements OnInit {
   @Input() text:string;
   @Input() path:string;
   @Input() disableHighlight:boolean = false;
+  @Input() drawer:MatDrawer;
 
   @Input() logout:boolean = false;
 
@@ -25,6 +27,14 @@ export class LinkComponent implements OnInit {
     if(this.logout){
       this.auth.logout();
     }
+
+    if(this.drawer.mode=="over"){
+
+      this.drawer.close();
+
+    }
+
+
   }
 
 

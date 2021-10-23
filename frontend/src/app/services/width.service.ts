@@ -13,26 +13,32 @@ export class WidthService {
   sizeDisplay = this.visible;
   dateDisplay = this.visible;
 
-  width:Width;
-  widthEvent:EventEmitter<Width> = new EventEmitter<Width>();
+  width: Width;
+  widthEvent: EventEmitter<Width> = new EventEmitter<Width>();
 
   constructor() {
 
-    this.widthEvent.subscribe(width=>{
+    this.widthEvent.subscribe(width => {
       this.adjustUI(width)
     })
 
   }
 
-  adjustUI(width:Width){
+  adjustUI(width: Width) {
 
-    if(width.containerWidth<1000){
+    if (width.containerWidth < 600) {
+
+      this.nameDisplay = this.visible;
+      this.sizeDisplay = this.notVisible;
+      this.dateDisplay = this.notVisible;
+
+    } else if (width.containerWidth < 1000) {
 
       this.nameDisplay = this.visible;
       this.sizeDisplay = this.visible;
       this.dateDisplay = this.notVisible;
 
-    }else {
+    } else {
       this.nameDisplay = this.visible;
       this.sizeDisplay = this.visible;
       this.dateDisplay = this.visible;

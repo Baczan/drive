@@ -1,14 +1,19 @@
-<div (click)="select($event)" [class.activated]="isSelected() && !fileService.dragging"  class="main">
+<div (click)="select($event)" (press)="hold($event)" [class.activated]="isSelected() && !fileService.dragging"  class="main">
 
   <div [style.display]="widthService.nameDisplay" class="item name">
 
     <div class="iconWrapper">
 
-      <mat-icon *ngIf="!file.hasThumbnail || !imageLoaded"  class="icon material-icons" [class.activated]="isSelected() && !fileService.dragging">
-        {{file.filename | icon }}
-      </mat-icon>
+        <mat-icon *ngIf="!(fileService.touchSelect && isSelected()) && (!file.hasThumbnail || !imageLoaded)"  class="icon material-icons" [class.activated]="isSelected() && !fileService.dragging">
+          {{file.filename | icon }}
+        </mat-icon>
 
-      <img (load)="imageLoaded=true" *ngIf="file.hasThumbnail" [style.display]="imageLoaded?'block':'none'" [src]="getSrc()">
+        <img (load)="imageLoaded=true" *ngIf="!(fileService.touchSelect && isSelected()) && file.hasThumbnail" [style.display]="imageLoaded?'block':'none'" [src]="getSrc()">
+
+
+        <mat-icon class="checkIcon" *ngIf="fileService.touchSelect && isSelected()">check</mat-icon>
+
+
 
     </div>
 

@@ -47,6 +47,8 @@ export class FileService {
 
   favoriteFolders:Folder[] = []
 
+  touchSelect:boolean = false;
+
 
   constructor(private http: HttpClient, private websocket: WebsocketService, @Inject(DOCUMENT) private document: HTMLDocument) {
 
@@ -173,6 +175,7 @@ export class FileService {
 
           this.clearSelection();
           this.sort();
+          this.touchSelect=false;
 
         })
         , finalize(() => {
@@ -437,6 +440,14 @@ export class FileService {
     },error => {
       console.log(error)
     })
+
+  }
+
+  disableTouchSelectIfEmpty(){
+
+    if(this.touchSelect && this.selectedFiles.length==0 && this.selectedFolders.length==0){
+      this.touchSelect=false;
+    }
 
   }
 

@@ -62,3 +62,13 @@
   color: #1967d2;
   background-color: rgb(232, 240, 254);
 }
+
+.checkIcon{
+  width: 15px;
+  height: 15px;
+  font-size: 15px;
+  color: white;
+  background-color: #1967d2;
+  padding: 2px;
+  border-radius: 100px;
+}

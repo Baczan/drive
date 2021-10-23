@@ -143,6 +143,15 @@ export class FileComponent implements OnInit, AfterViewInit {
 
     })
   }
+
+  clearSelection(){
+
+    this.fileService.selectedFolders = []
+    this.fileService.selectedFiles = []
+    this.fileService.touchSelect = false;
+
+  }
+
 }
 
 @Component({

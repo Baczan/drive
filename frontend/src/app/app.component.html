@@ -13,12 +13,12 @@
 
     <mat-drawer (openedChange)="updateWidth()" [opened]="opened" [mode]="mode" mode="side" #drawer class="mat-elevation-z1">
 
-      <app-link class="accountLink" icon="person" text="Konto" path="/account"></app-link>
+      <app-link class="accountLink" icon="person" text="Konto" path="/account" [drawer]="drawer"></app-link>
       <mat-divider></mat-divider>
-      <app-link icon="folder" [disableHighlight]="checkIfFavorite()" text="Pliki" path="/files"></app-link>
-      <app-link icon="payment" text="Subskrypcja" path="/subscription"></app-link>
+      <app-link icon="folder" [disableHighlight]="checkIfFavorite()" text="Pliki" path="/files" [drawer]="drawer"></app-link>
+      <app-link icon="payment" text="Subskrypcja" path="/subscription" [drawer]="drawer"></app-link>
 
-      <div *ngIf="fileService.favoriteFolders.length>0">
+      <div class="favoriteWrapper" *ngIf="fileService.favoriteFolders.length>0">
 
 
 
@@ -26,7 +26,7 @@
           <span class="favoriteTitleText">Ulubione foldery</span>
         </div>
 
-        <app-link *ngFor="let folder of fileService.favoriteFolders" icon="folder_special" [text]="folder.folderName" [path]="'/files/'+folder.id"></app-link>
+        <app-link *ngFor="let folder of fileService.favoriteFolders" icon="folder_special" [text]="folder.folderName" [path]="'/files/'+folder.id" [drawer]="drawer"></app-link>
 
       </div>
 
@@ -43,7 +43,7 @@
       </div>
 
       <div class="spacer"></div>
-      <app-link class="logoutLink" icon="logout" [logout]="true" text="Wyloguj się" path="/logout"></app-link>
+      <app-link class="logoutLink" icon="logout" [logout]="true" text="Wyloguj się" path="/logout" [drawer]="drawer"></app-link>
 
     </mat-drawer>
 

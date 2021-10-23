@@ -2,6 +2,12 @@
   <div class="main mat-elevation-z2">
     <div class="toolbar">
 
+      <button *ngIf="fileService.touchSelect && (fileService.selectedFolders.length>0 || fileService.selectedFiles.length > 0)" (click)="clearSelection()" mat-icon-button matTooltip="Pobierz">
+        <mat-icon class="icon">
+          clear
+        </mat-icon>
+      </button>
+
       <button *ngIf="displayDownload()" (click)="fileService.download()" mat-icon-button matTooltip="Pobierz">
         <mat-icon class="icon">
           file_download

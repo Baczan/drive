@@ -1,11 +1,14 @@
 
-  <div  (click)="select($event)" (tap)="tapped($event)" [class.activated]="isSelected() && !fileService.dragging"  class="main">
+  <div  (click)="select($event)" (press)="hold($event)" (tap)="tapped($event)" [class.activated]="isSelected() && !fileService.dragging"  class="main">
 
     <div [style.display]="widthService.nameDisplay" class="item name">
 
       <div class="iconWrapper">
-        <mat-icon *ngIf="!folder.favorite || returnFolder" class="icon" [class.activated]="isSelected() && !fileService.dragging">folder</mat-icon>
-        <mat-icon *ngIf="folder.favorite && !returnFolder" class="icon" [class.activated]="isSelected() && !fileService.dragging">folder_special</mat-icon>
+        <mat-icon *ngIf="!(fileService.touchSelect && isSelected()) && (!folder.favorite || returnFolder)" class="icon" [class.activated]="isSelected() && !fileService.dragging">folder</mat-icon>
+        <mat-icon *ngIf="!(fileService.touchSelect && isSelected()) && (folder.favorite && !returnFolder)" class="icon" [class.activated]="isSelected() && !fileService.dragging">folder_special</mat-icon>
+
+        <mat-icon class="checkIcon" *ngIf="fileService.touchSelect && isSelected()">check</mat-icon>
+
       </div>
 
       <div *ngIf="!returnFolder">

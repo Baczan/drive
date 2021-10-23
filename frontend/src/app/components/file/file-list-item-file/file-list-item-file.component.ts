@@ -18,6 +18,8 @@ export class FileListItemFileComponent implements OnInit {
 
   imageLoaded = false;
 
+  ignoreNextClick = false;
+
   constructor(public widthService:WidthService,public fileService:FileService,private router:Router) { }
 
   ngOnInit(): void {
@@ -29,31 +31,75 @@ export class FileListItemFileComponent implements OnInit {
 
   select(event:any){
 
+    if(this.ignoreNextClick){
+      this.ignoreNextClick=false;
+      return;
+    }
 
-    if(event.ctrlKey){
+    console.log(1)
 
-      if(this.isSelected()){
+    if(this.fileService.touchSelect){
+
+      if(this.fileService.selectedFiles.includes(this.file)){
         this.fileService.selectedFiles.splice(this.fileService.selectedFiles.indexOf(this.file),1)
-        this.fileService.shiftSelectLastIndex = null;
-      }else{
-        this.fileService.selectedFiles.push(this.file);
+      }else {
+        this.fileService.selectedFiles.push(this.file)
+      }
+
+    }else {
+
+      if(event.ctrlKey){
+
+        if(this.isSelected()){
+          this.fileService.selectedFiles.splice(this.fileService.selectedFiles.indexOf(this.file),1)
+          this.fileService.shiftSelectLastIndex = null;
+        }else{
+          this.fileService.selectedFiles.push(this.file);
+          this.fileService.shiftSelectLastIndex = this.index;
+        }
+
+      }else if(event.shiftKey){
+
+        this.fileService.shiftSelect(this.index)
+
+      }else {
+        this.fileService.selectedFolders = [];
+        this.fileService.selectedFiles = [this.file];
         this.fileService.shiftSelectLastIndex = this.index;
       }
 
-    }else if(event.shiftKey){
-
-      this.fileService.shiftSelect(this.index)
-
-    }else {
-      this.fileService.selectedFolders = [];
-      this.fileService.selectedFiles = [this.file];
-      this.fileService.shiftSelectLastIndex = this.index;
     }
 
+    this.fileService.disableTouchSelectIfEmpty()
   }
 
   isSelected(){
     return this.fileService.selectedFiles.includes(this.file);
+  }
+
+  hold(event:any){
+
+    if(event.pointerType!="touch"){
+      return;
+    }
+
+
+    this.ignoreNextClick = true;
+
+    if(!this.fileService.touchSelect){
+      this.fileService.touchSelect = true;
+      this.fileService.selectedFiles = []
+      this.fileService.selectedFolders = []
+    }
+
+    if(this.fileService.selectedFiles.includes(this.file)){
+      this.fileService.selectedFiles.splice(this.fileService.selectedFiles.indexOf(this.file),1)
+    }else {
+      this.fileService.selectedFiles.push(this.file)
+    }
+
+    this.fileService.disableTouchSelectIfEmpty()
+
   }
 
 }
