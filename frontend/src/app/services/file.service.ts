@@ -357,6 +357,7 @@ export class FileService {
 
     this.http.delete(url,{responseType:"text"}).subscribe(response=>{
 
+      this.getStorageSpace()
       this.files.splice(this.files.indexOf(fileEntity),1);
     },error => {
       console.log(error)
@@ -370,6 +371,7 @@ export class FileService {
 
     this.http.delete(url,{responseType:"text"}).subscribe(response=>{
 
+      this.getStorageSpace()
       this.folders.splice(this.folders.indexOf(folder),1);
     },error => {
       console.log(error)
