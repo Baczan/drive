@@ -12,6 +12,7 @@ import {DOCUMENT} from "@angular/common";
 import {ZipInfo} from "../models/ZipInfo";
 import {MatBottomSheetRef} from "@angular/material/bottom-sheet";
 import {FileTransferSheetComponent} from "../components/file/file-transfer-sheet/file-transfer-sheet.component";
+import {StorageSpace} from "../models/StorageSpace";
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +42,8 @@ export class FileService {
   zipDeleted:EventEmitter<boolean> = new EventEmitter<boolean>();
 
   dragging:boolean = false;
+
+  storageSpace:StorageSpace;
 
 
   constructor(private http: HttpClient, private websocket: WebsocketService, @Inject(DOCUMENT) private document: HTMLDocument) {
@@ -73,6 +76,12 @@ export class FileService {
 
       }
 
+    })
+
+    websocket.rxStomp.watch("/user/queue/storageSpace").subscribe(response => {
+
+      this.storageSpace = JSON.parse(response.body);
+      console.log(this.storageSpace)
     })
 
   }
@@ -360,6 +369,19 @@ export class FileService {
     this.http.delete(url,{responseType:"text"}).subscribe(response=>{
 
       this.folders.splice(this.folders.indexOf(folder),1);
+    },error => {
+      console.log(error)
+    })
+
+  }
+
+  getStorageSpace(){
+
+    const url = `${environment.AUTHORIZATION_SERVER_URL}/api/file/storageSpace`;
+
+    this.http.get<StorageSpace>(url).subscribe(response=>{
+      this.storageSpace = response;
+      console.log(this.storageSpace)
     },error => {
       console.log(error)
     })

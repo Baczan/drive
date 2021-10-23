@@ -48,15 +48,16 @@ import { FileZipItemComponent } from './components/file/file-transfer-sheet/file
 import {DragulaModule} from "ng2-dragula";
 import {NgxDropzoneModule} from "ngx-dropzone";
 import { DropzoneDirective } from './directives/dropzone.directive';
+import {StorageSpaceGuard} from "./guards/storage-space.guard";
 
 
 const routes: Routes = [
 
-  {path: "payment", component: PaymentComponent, canActivate: [LoggedInGuard,SubscriptionGuard]},
-  {path: "files", component: FileComponent, canActivate: [LoggedInGuard,SubscriptionGuard]},
-  {path: "files/:id", component: FileComponent, canActivate: [LoggedInGuard,SubscriptionGuard]},
-  {path: "subscription", component: NewSubscriptionComponent, canActivate: [LoggedInGuard,SubscriptionGuard]},
-  {path: "subscription2", component: SubscriptionComponent, canActivate: [LoggedInGuard,SubscriptionGuard]},
+  {path: "payment", component: PaymentComponent, canActivate: [LoggedInGuard,SubscriptionGuard,StorageSpaceGuard]},
+  {path: "files", component: FileComponent, canActivate: [LoggedInGuard,SubscriptionGuard,StorageSpaceGuard]},
+  {path: "files/:id", component: FileComponent, canActivate: [LoggedInGuard,SubscriptionGuard,StorageSpaceGuard]},
+  {path: "subscription", component: NewSubscriptionComponent, canActivate: [LoggedInGuard,SubscriptionGuard,StorageSpaceGuard]},
+  {path: "subscription2", component: SubscriptionComponent, canActivate: [LoggedInGuard,SubscriptionGuard,StorageSpaceGuard]},
   {path: '**', redirectTo: "files",}
 ];
 
@@ -114,7 +115,7 @@ const routes: Routes = [
     DragulaModule.forRoot(),
     NgxDropzoneModule
   ],
-  providers: [DatePipe,LoggedInGuard, {provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptorService, multi: true},SubscriptionGuard],
+  providers: [DatePipe,LoggedInGuard, {provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptorService, multi: true},SubscriptionGuard,StorageSpaceGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule {

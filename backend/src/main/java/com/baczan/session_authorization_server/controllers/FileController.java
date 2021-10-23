@@ -1,15 +1,14 @@
 package com.baczan.session_authorization_server.controllers;
 
 import com.baczan.session_authorization_server.dtos.FilesAndFoldersDTO;
+import com.baczan.session_authorization_server.dtos.StorageSpaceDTO;
 import com.baczan.session_authorization_server.dtos.ZipFile;
 import com.baczan.session_authorization_server.dtos.ZipFolder;
-import com.baczan.session_authorization_server.entities.FileEntity;
-import com.baczan.session_authorization_server.entities.Folder;
-import com.baczan.session_authorization_server.entities.ZipInfo;
-import com.baczan.session_authorization_server.repositories.FileRepository;
-import com.baczan.session_authorization_server.repositories.FolderRepository;
-import com.baczan.session_authorization_server.repositories.ZipRepository;
+import com.baczan.session_authorization_server.entities.*;
+import com.baczan.session_authorization_server.exceptions.TierNotFoundException;
+import com.baczan.session_authorization_server.repositories.*;
 import com.baczan.session_authorization_server.service.FileService;
+import com.baczan.session_authorization_server.service.StripeService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -47,15 +46,31 @@ public class FileController {
     @Autowired
     private ZipRepository zipRepository;
 
+    @Autowired
+    private StripeService stripeService;
+
+    @Autowired
+    private SubscriptionRepository subscriptionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
 
     @PostMapping("/upload")
-    public ResponseEntity<?> upload(@RequestParam MultipartFile file, @RequestParam(required = false) UUID folderId, Authentication authentication) {
+    public ResponseEntity<?> upload(@RequestParam MultipartFile file, @RequestParam(required = false) UUID folderId, Authentication authentication) throws TierNotFoundException {
 
 
         if (fileRepository.existsByFilenameAndFolderId(file.getOriginalFilename(), folderId)) {
             return new ResponseEntity<>("not_unique", HttpStatus.BAD_REQUEST);
         }
 
+        User user = userRepository.getUserByEmail(authentication.getName());
+
+        StorageSpaceDTO storageSpaceDTO = stripeService.getStorageSpace(user.getEmail());
+
+        if((storageSpaceDTO.getUsedSpace()+file.getSize())>storageSpaceDTO.getAvailableSpace()){
+            return new ResponseEntity<>("not_enough_space", HttpStatus.BAD_REQUEST);
+        }
 
         try {
             return new ResponseEntity<>(fileService.saveFile(file, folderId, authentication), HttpStatus.OK);
@@ -386,6 +401,12 @@ public class FileController {
             return new ResponseEntity<>("io_exception", HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @GetMapping("/storageSpace")
+    public ResponseEntity<?> getStorageSpace(Authentication authentication) throws TierNotFoundException {
+
+        return new ResponseEntity<>(stripeService.getStorageSpace(authentication.getName()),HttpStatus.OK);
     }
 
 }

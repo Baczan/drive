@@ -58,3 +58,24 @@ mat-divider{
   height: 100%;
 }
 
+.storageSpaceTitle{
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  color: rgba(0,0,0,0.6);
+  padding-bottom: 8px;
+}
+
+.storageSpace{
+  padding: 0 20px;
+}
+
+.storageSpaceDescription{
+  padding-top: 4px;
+  color: rgba(0,0,0,0.8);
+}
+
+.mat-progress-bar{
+  height: 6px !important;
+}

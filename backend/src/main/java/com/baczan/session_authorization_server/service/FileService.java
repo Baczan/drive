@@ -2,8 +2,11 @@ package com.baczan.session_authorization_server.service;
 
 import com.baczan.session_authorization_server.dtos.ZipFile;
 import com.baczan.session_authorization_server.entities.FileEntity;
+import com.baczan.session_authorization_server.entities.User;
 import com.baczan.session_authorization_server.entities.ZipInfo;
+import com.baczan.session_authorization_server.exceptions.TierNotFoundException;
 import com.baczan.session_authorization_server.repositories.FileRepository;
+import com.baczan.session_authorization_server.repositories.UserRepository;
 import com.baczan.session_authorization_server.repositories.ZipRepository;
 import org.apache.commons.io.FilenameUtils;
 import org.imgscalr.Scalr;
@@ -44,6 +47,12 @@ public class FileService {
     @Autowired
     private ZipRepository zipRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private StripeService stripeService;
+
     private final List<String> acceptableImageFormats = Arrays.asList(
             "png",
             "jpg",
@@ -83,6 +92,14 @@ public class FileService {
 
         fileEntity = fileRepository.save(fileEntity);
 
+        User user = userRepository.getUserByEmail(authentication.getName());
+
+        user.setStorageSpace(user.getStorageSpace()+fileEntity.getSize());
+
+        try {
+            simpMessagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/storageSpace", stripeService.getStorageSpace(user.getEmail()));
+        } catch (TierNotFoundException ignored) {
+        }
 
         return fileEntity;
     }
@@ -96,6 +113,15 @@ public class FileService {
         }
 
         fileRepository.delete(fileEntity);
+
+        User user = userRepository.getUserByEmail(fileEntity.getUser());
+
+        user.setStorageSpace(user.getStorageSpace()-fileEntity.getSize());
+
+        try {
+            simpMessagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/storageSpace", stripeService.getStorageSpace(user.getEmail()));
+        } catch (TierNotFoundException ignored) {
+        }
     }
 
     private void createThumbnail(FileEntity fileEntity) throws IOException {

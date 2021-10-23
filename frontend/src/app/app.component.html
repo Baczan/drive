@@ -17,6 +17,19 @@
       <mat-divider></mat-divider>
       <app-link icon="folder" text="Pliki" path="/files"></app-link>
       <app-link icon="payment" text="Subskrypcja" path="/subscription"></app-link>
+
+      <mat-divider></mat-divider>
+
+      <div *ngIf="fileService.storageSpace" class="storageSpace">
+        <div class="storageSpaceTitle">Miejsce na dane</div>
+
+        <mat-progress-bar [value]="(fileService.storageSpace.usedSpace/fileService.storageSpace.availableSpace)*100"></mat-progress-bar>
+
+        <div class="storageSpaceDescription">
+          Wykorzystano {{fileService.storageSpace.usedSpace| filesize}} z {{fileService.storageSpace.availableSpace | filesize}}
+        </div>
+      </div>
+
       <div class="spacer"></div>
       <app-link icon="logout" [logout]="true" text="Wyloguj się" path="/logout"></app-link>
 

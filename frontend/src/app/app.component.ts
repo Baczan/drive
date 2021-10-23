@@ -14,6 +14,7 @@ import {WidthService} from "./services/width.service";
 import {Width} from "./models/Width";
 import {Subscription} from "rxjs";
 import {BreakpointObserver, BreakpointState} from "@angular/cdk/layout";
+import {FileService} from "./services/file.service";
 
 @Component({
   selector: 'app-root',
@@ -43,7 +44,7 @@ export class AppComponent implements AfterViewInit,OnDestroy,OnInit{
 
   title = 'Dysk';
 
-  constructor(private widthService:WidthService,private cdr:ChangeDetectorRef, private breakpointObserver: BreakpointObserver){
+  constructor(private widthService:WidthService,private cdr:ChangeDetectorRef, private breakpointObserver: BreakpointObserver,public fileService:FileService){
   }
 
 
@@ -58,11 +59,13 @@ export class AppComponent implements AfterViewInit,OnDestroy,OnInit{
 
       this.cdr.detectChanges();
     });
+
   }
 
   ngAfterViewInit(): void {
     this.updateWidth();
     this.updateToWidth(this.widthService.width);
+
   }
 
   updateWidth(){

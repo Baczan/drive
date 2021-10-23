@@ -99,7 +99,6 @@ public class UserController {
     public String registerPOST(Model model, @RequestParam String username,@RequestParam String password,@RequestParam String passwordC) throws MessagingException {
 
 
-
         if(username.trim().equals("")){
             model.addAttribute("errorUsername","usernameEmpty");
         }
@@ -248,6 +247,5 @@ public class UserController {
         passwordChangeTokenRepository.deleteAllByEmail(passwordChangeToken.getEmail());
         return "password_change_message";
     }
-
 
 }

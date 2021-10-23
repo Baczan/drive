@@ -42,6 +42,8 @@ export class FileComponent implements OnInit, AfterViewInit {
     });
 
 
+
+
   }
 
 
@@ -51,7 +53,6 @@ export class FileComponent implements OnInit, AfterViewInit {
 
   fileInputClick(event: any) {
 
-    console.log(event)
 
     // @ts-ignore
     let fileList: FileList = event.target.files;
