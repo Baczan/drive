@@ -56,21 +56,23 @@ export class FolderNameChangeComponent implements OnInit {
             this.changingName = false;
           }
         ))
-      .subscribe(response=>{
+      .subscribe(response => {
 
         this.fileService.selectedFolders = []
-        let index = this.fileService.folders.findIndex(folder1=>folder1.id==response.id)
-        if(index>=0){
-          this.fileService.folders[index]=response;
+        let index = this.fileService.folders.findIndex(folder1 => folder1.id == response.id)
+        if (index >= 0) {
+          this.fileService.folders[index] = response;
         }
+
+        this.fileService.getFavoriteFolder();
 
         this.closeDialog();
 
-      },error => {
+      }, error => {
 
         if (error.error == "not_unique") {
           this.folderNameControl.setErrors({notUnique: "notUnique"})
-        }else {
+        } else {
           this.fileService.getFilesAndFolders();
           this.closeDialog();
         }
