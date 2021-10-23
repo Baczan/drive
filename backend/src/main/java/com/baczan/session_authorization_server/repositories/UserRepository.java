@@ -2,6 +2,9 @@ package com.baczan.session_authorization_server.repositories;
 
 import com.baczan.session_authorization_server.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -30,4 +33,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
   boolean existsByGoogleId(String googleId);
 
   boolean existsByFacebookId(String facebookId);
+
+  @Modifying
+  @Query("update User u set u.storageSpace = u.storageSpace+:amount where u.email = :email")
+  void addStorageSpace(@Param("email") String email,@Param("amount") long amount);
 }

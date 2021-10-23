@@ -162,6 +162,7 @@ public class StripeService {
 
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     public StorageSpaceDTO getStorageSpace(String email) throws TierNotFoundException {
 
         StorageSpaceDTO storageSpaceDTO = new StorageSpaceDTO();

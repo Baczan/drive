@@ -25,6 +25,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @RestController
@@ -54,6 +55,8 @@ public class FileController {
 
     @Autowired
     private UserRepository userRepository;
+
+    private final ReentrantLock lock = new ReentrantLock();
 
 
     @PostMapping("/upload")

@@ -120,6 +120,8 @@ export class FileService {
             this.sort();
           }
 
+          this.getStorageSpace()
+
           this.uploading.splice(this.uploading.indexOf(fileUploading), 1)
 
         }

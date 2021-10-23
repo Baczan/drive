@@ -33,6 +33,7 @@ export class DropzoneDirective {
     evt.preventDefault();
     evt.stopPropagation();
     this.fileOver = false;
+    this.fileService.dragging = false;
     // @ts-ignore
     let files = evt.dataTransfer.files;
 

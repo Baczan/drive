@@ -1,13 +1,17 @@
 package com.baczan.session_authorization_server.service;
 
+import com.baczan.session_authorization_server.dtos.StorageSpaceDTO;
 import com.baczan.session_authorization_server.dtos.ZipFile;
 import com.baczan.session_authorization_server.entities.FileEntity;
+import com.baczan.session_authorization_server.entities.SubscriptionEntity;
 import com.baczan.session_authorization_server.entities.User;
 import com.baczan.session_authorization_server.entities.ZipInfo;
 import com.baczan.session_authorization_server.exceptions.TierNotFoundException;
 import com.baczan.session_authorization_server.repositories.FileRepository;
 import com.baczan.session_authorization_server.repositories.UserRepository;
 import com.baczan.session_authorization_server.repositories.ZipRepository;
+import com.stripe.model.Invoice;
+import com.stripe.model.Subscription;
 import org.apache.commons.io.FilenameUtils;
 import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -29,6 +35,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -53,6 +60,8 @@ public class FileService {
     @Autowired
     private StripeService stripeService;
 
+    private final ReentrantLock lock = new ReentrantLock();
+
     private final List<String> acceptableImageFormats = Arrays.asList(
             "png",
             "jpg",
@@ -60,6 +69,7 @@ public class FileService {
     );
 
 
+    @Transactional
     public FileEntity saveFile(MultipartFile file, UUID folderId, Authentication authentication) throws IOException {
 
         String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
@@ -92,18 +102,21 @@ public class FileService {
 
         fileEntity = fileRepository.save(fileEntity);
 
-        User user = userRepository.getUserByEmail(authentication.getName());
 
-        user.setStorageSpace(user.getStorageSpace()+fileEntity.getSize());
+
+        //saveStorageSpace(authentication.getName(),fileEntity.getSize());
+
+        this.userRepository.addStorageSpace(fileEntity.getUser(),fileEntity.getSize());
 
         try {
-            simpMessagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/storageSpace", stripeService.getStorageSpace(user.getEmail()));
+            simpMessagingTemplate.convertAndSendToUser(authentication.getName(), "/queue/storageSpace", stripeService.getStorageSpace(fileEntity.getUser()));
         } catch (TierNotFoundException ignored) {
         }
 
         return fileEntity;
     }
 
+    @Transactional
     public void deleteFile(FileEntity fileEntity) throws IOException {
 
         Files.deleteIfExists(getPath(fileEntity));
@@ -114,12 +127,12 @@ public class FileService {
 
         fileRepository.delete(fileEntity);
 
-        User user = userRepository.getUserByEmail(fileEntity.getUser());
+        //saveStorageSpace(fileEntity.getUser(),-fileEntity.getSize());
 
-        user.setStorageSpace(user.getStorageSpace()-fileEntity.getSize());
+        this.userRepository.addStorageSpace(fileEntity.getUser(),-fileEntity.getSize());
 
         try {
-            simpMessagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/storageSpace", stripeService.getStorageSpace(user.getEmail()));
+            simpMessagingTemplate.convertAndSendToUser(fileEntity.getUser(), "/queue/storageSpace", stripeService.getStorageSpace(fileEntity.getUser()));
         } catch (TierNotFoundException ignored) {
         }
     }
@@ -204,5 +217,7 @@ public class FileService {
 
 
     }
+
+    
 
 }
