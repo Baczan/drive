@@ -31,8 +31,6 @@ mat-drawer-container {
 
 mat-drawer {
   width: 256px;
-  padding-top: 2px;
-  padding-bottom: 16px;
 }
 
 .drawerWrapper{
@@ -41,8 +39,8 @@ mat-drawer {
 }
 
 mat-divider{
-  margin-top: 10px;
-  margin-bottom: 16px;
+  margin-top: 4px;
+  margin-bottom: 12px;
 }
 
 .spacer {
@@ -69,6 +67,7 @@ mat-divider{
 
 .storageSpace{
   padding: 0 20px;
+  margin-top: 4px;
 }
 
 .storageSpaceDescription{
@@ -99,3 +98,13 @@ mat-divider{
   text-overflow: ellipsis;
 }
 
+.accountLink{
+  display: block;
+  padding-top: 2px;
+}
+
+.logoutLink{
+  display: block;
+  padding-bottom: 12px;
+  padding-top: 12px;
+}

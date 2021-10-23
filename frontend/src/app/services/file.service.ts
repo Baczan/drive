@@ -375,6 +375,8 @@ export class FileService {
 
       this.getStorageSpace()
       this.folders.splice(this.folders.indexOf(folder),1);
+
+      this.getFavoriteFolder()
     },error => {
       console.log(error)
     })
