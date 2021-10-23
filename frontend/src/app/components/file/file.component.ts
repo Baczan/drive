@@ -16,6 +16,7 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {ActivatedRoute, Route, Router} from "@angular/router";
 import {MatBottomSheet} from "@angular/material/bottom-sheet";
 import {FileTransferSheetComponent} from "./file-transfer-sheet/file-transfer-sheet.component";
+import {FolderNameChangeComponent} from "./dialogs/folder-name-change/folder-name-change.component";
 
 @Component({
   selector: 'app-file',
@@ -100,8 +101,11 @@ export class FileComponent implements OnInit, AfterViewInit {
     return this.fileService.uploading.filter(fileUploading=>!fileUploading.seen).length + this.fileService.currentZipFiles.filter(zipFile=>!zipFile.seen).length;
   }
 
-  fileDropped(files:any){
-
+  changeFolderName(){
+    const dialogRef = this.dialog.open(FolderNameChangeComponent, {
+      width: "400px",
+      autoFocus: false
+    });
   }
 }
 

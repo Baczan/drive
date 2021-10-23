@@ -392,5 +392,12 @@ export class FileService {
 
   }
 
+  changeFolderName(name:string){
+
+    const url = `${environment.AUTHORIZATION_SERVER_URL}/api/folder/changeName?folderId=${this.selectedFolders[0].id}&newName=${name}`
+
+    return this.http.post<Folder>(url,null);
+  }
+
 }
 

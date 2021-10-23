@@ -14,6 +14,14 @@
         </mat-icon>
       </button>
 
+      <button *ngIf="fileService.selectedFolders.length==1 && fileService.selectedFiles.length==0" (click)="changeFolderName()" mat-icon-button>
+        <mat-icon class="icon">
+          drive_file_rename_outline
+        </mat-icon>
+      </button>
+
+
+
       <button [matMenuTriggerFor]="menu" mat-icon-button>
         <mat-icon class="icon">
           add

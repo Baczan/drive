@@ -1,0 +1,20 @@
+<div class="title">Zmień nazwe folderu</div>
+
+<div mat-dialog-content>
+  <mat-form-field floatLabel="never">
+    <input placeholder="Nazwa folderu" matInput [formControl]="folderNameControl" appAutofocus >
+    <mat-error *ngIf="folderNameControl.hasError('required') && folderNameControl.touched">
+      Wymagane
+    </mat-error>
+
+    <mat-error *ngIf="folderNameControl.hasError('notUnique') && folderNameControl.touched">
+      Folder o takiej nazwie już istnieje
+    </mat-error>
+
+  </mat-form-field>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="closeDialog()">Anuluj</button>
+  <button mat-button (click)="changeName()" [disabled]="changingName" cdkFocusInitial>Ok</button>
+</div>
+

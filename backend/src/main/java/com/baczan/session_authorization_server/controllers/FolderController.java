@@ -120,5 +120,32 @@ public class FolderController {
 
     }
 
+    @PostMapping("/changeName")
+    public ResponseEntity<?> changeFolderName(@RequestParam UUID folderId,@RequestParam String newName,Authentication authentication){
+
+        Optional<Folder> optionalFolder = folderRepository.findById(folderId);
+
+        if(optionalFolder.isEmpty()){
+            return new ResponseEntity<>("not_found",HttpStatus.BAD_REQUEST);
+        }
+
+        Folder folder = optionalFolder.get();
+
+        if(!folder.getUser().equals(authentication.getName())){
+            return new ResponseEntity<>("UNAUTHORIZED",HttpStatus.UNAUTHORIZED);
+        }
+
+        if(folderRepository.existsByFolderNameAndParentId(newName,folder.getParentId())){
+            return new ResponseEntity<>("not_unique",HttpStatus.BAD_REQUEST);
+        }
+
+        folder.setFolderName(newName);
+
+        folder = folderRepository.save(folder);
+
+        return new ResponseEntity<>(folder,HttpStatus.OK);
+
+    }
+
 
 }

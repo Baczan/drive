@@ -51,6 +51,7 @@ import { DropzoneDirective } from './directives/dropzone.directive';
 import {StorageSpaceGuard} from "./guards/storage-space.guard";
 import {A11yModule} from "@angular/cdk/a11y";
 import { AutofocusDirective } from './directives/autofocus.directive';
+import { FolderNameChangeComponent } from './components/file/dialogs/folder-name-change/folder-name-change.component';
 
 
 const routes: Routes = [
@@ -87,7 +88,8 @@ const routes: Routes = [
     FileUploadingItemComponent,
     FileZipItemComponent,
     DropzoneDirective,
-    AutofocusDirective
+    AutofocusDirective,
+    FolderNameChangeComponent
   ],
   imports: [
     BrowserModule,
