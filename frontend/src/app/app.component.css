@@ -79,3 +79,23 @@ mat-divider{
 .mat-progress-bar{
   height: 6px !important;
 }
+
+.favoriteTitleWrapper{
+  height: 32px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  color: rgba(0,0,0,0.5);
+  margin: 16px 12px -4px;
+}
+
+.favoriteTitleText{
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  margin-left: 12px;
+  margin-top: 2px;
+  width: calc(100% - 64px);
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+

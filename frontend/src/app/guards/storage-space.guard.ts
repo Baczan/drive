@@ -16,7 +16,7 @@ export class StorageSpaceGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
     this.fileService.getStorageSpace()
-
+    this.fileService.getFavoriteFolder()
     return true;
   }
 

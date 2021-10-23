@@ -2,27 +2,38 @@
   <div class="main mat-elevation-z2">
     <div class="toolbar">
 
-      <button *ngIf="displayDownload()" (click)="fileService.download()" mat-icon-button>
+      <button *ngIf="displayDownload()" (click)="fileService.download()" mat-icon-button matTooltip="Pobierz">
         <mat-icon class="icon">
           file_download
         </mat-icon>
       </button>
 
-      <button *ngIf="displayDownload()" (click)="fileService.delete()" mat-icon-button>
+      <button *ngIf="displayDownload()" (click)="fileService.delete()" mat-icon-button matTooltip="Usuń">
         <mat-icon class="icon">
           delete
         </mat-icon>
       </button>
 
-      <button *ngIf="fileService.selectedFolders.length==1 && fileService.selectedFiles.length==0" (click)="changeFolderName()" mat-icon-button>
+      <button *ngIf="fileService.selectedFolders.length==1 && fileService.selectedFiles.length==0" (click)="changeFolderName()" mat-icon-button matTooltip="Zmień nazwe">
         <mat-icon class="icon">
           drive_file_rename_outline
         </mat-icon>
       </button>
 
+      <button *ngIf="fileService.selectedFolders.length>0 && fileService.selectedFiles.length==0 && starIconMode()" (click)="setFavorite()" mat-icon-button matTooltip="Dodaj do ulubionych">
+        <mat-icon  class="icon">
+          star
+        </mat-icon>
+      </button>
+
+      <button *ngIf="fileService.selectedFolders.length>0 && fileService.selectedFiles.length==0 && !starIconMode()" (click)="setFavorite()" mat-icon-button matTooltip="Usuń z ulubionych">
+        <mat-icon class="icon">
+          star_border
+        </mat-icon>
+      </button>
 
 
-      <button [matMenuTriggerFor]="menu" mat-icon-button>
+      <button [matMenuTriggerFor]="menu" mat-icon-button matTooltip="Dodaj plik lub folder">
         <mat-icon class="icon">
           add
         </mat-icon>

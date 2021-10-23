@@ -4,6 +4,7 @@ export class Folder {
   public folderName:string;
   public ancestry:string | null;
   public parentId: string | null;
+  public favorite:boolean = false;
 
   constructor() {
   }

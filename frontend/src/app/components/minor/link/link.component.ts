@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {AuthService} from "../../../../modules/auth/services/auth.service";
 
 @Component({
@@ -11,11 +11,12 @@ export class LinkComponent implements OnInit {
   @Input() icon:string;
   @Input() text:string;
   @Input() path:string;
+  @Input() disableHighlight:boolean = false;
 
   @Input() logout:boolean = false;
 
 
-  constructor(private auth:AuthService) { }
+  constructor(private auth:AuthService,private cdr:ChangeDetectorRef) { }
 
   ngOnInit(): void {
   }
@@ -25,5 +26,6 @@ export class LinkComponent implements OnInit {
       this.auth.logout();
     }
   }
+
 
 }

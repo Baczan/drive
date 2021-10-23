@@ -26,6 +26,9 @@ public class Folder {
     @Column(name="parent_id")
     private UUID parentId;
 
+    @Column(name = "favorite")
+    private boolean favorite = false;
+
     public Folder() {
     }
 
@@ -75,6 +78,14 @@ public class Folder {
 
     public void setParentId(UUID parentId) {
         this.parentId = parentId;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 
     @Override

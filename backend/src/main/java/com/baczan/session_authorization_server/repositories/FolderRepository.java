@@ -12,8 +12,9 @@ public interface FolderRepository extends JpaRepository<Folder, UUID> {
     boolean existsByFolderNameAndParentId(String folderName,UUID parentID);
 
     List<Folder> getAllByParentIdAndUser(UUID parentId,String user);
-    
 
     List<Folder> getAllByAncestryIsStartingWith(String ancestry);
+
+    List<Folder> getAllByUserAndFavorite(String user,boolean favorite);
 
 }

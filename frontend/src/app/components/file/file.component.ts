@@ -17,6 +17,7 @@ import {ActivatedRoute, Route, Router} from "@angular/router";
 import {MatBottomSheet} from "@angular/material/bottom-sheet";
 import {FileTransferSheetComponent} from "./file-transfer-sheet/file-transfer-sheet.component";
 import {FolderNameChangeComponent} from "./dialogs/folder-name-change/folder-name-change.component";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-file',
@@ -29,7 +30,7 @@ export class FileComponent implements OnInit, AfterViewInit {
   @ViewChild("fileInput") fileInput: HTMLInputElement;
 
 
-  constructor(public fileService: FileService, public dialog: MatDialog, private cdr: ChangeDetectorRef, private route: ActivatedRoute, private router: Router,private bottomSheet: MatBottomSheet) {
+  constructor(public fileService: FileService, public dialog: MatDialog, private cdr: ChangeDetectorRef, private route: ActivatedRoute, private router: Router,private bottomSheet: MatBottomSheet,private snackbar:MatSnackBar) {
   }
 
   ngOnInit(): void {
@@ -106,6 +107,41 @@ export class FileComponent implements OnInit, AfterViewInit {
       width: "400px",
       autoFocus: false
     });
+  }
+
+  starIconMode(){
+    let value = false;
+
+    this.fileService.selectedFolders.forEach(folder=>{
+      if(!folder.favorite){
+        value = true;
+      }
+    })
+
+    return value;
+  }
+
+  setFavorite(){
+    this.fileService.setFavorite()?.subscribe(response=>{
+
+      response.forEach(folder=>{
+
+        let index = this.fileService.folders.findIndex(folder1=>folder1.id==folder.id);
+
+        if(index>=0){
+          this.fileService.folders[index].favorite=folder.favorite;
+        }
+
+      })
+
+      this.fileService.getFavoriteFolder();
+
+      this.fileService.selectedFolders = [];
+    },error=>{
+
+      this.snackbar.open("Błąd podczas dodawania do ulubionych","OK")
+
+    })
   }
 }
 

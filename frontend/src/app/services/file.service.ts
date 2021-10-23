@@ -45,6 +45,8 @@ export class FileService {
 
   storageSpace:StorageSpace;
 
+  favoriteFolders:Folder[] = []
+
 
   constructor(private http: HttpClient, private websocket: WebsocketService, @Inject(DOCUMENT) private document: HTMLDocument) {
 
@@ -397,6 +399,43 @@ export class FileService {
     const url = `${environment.AUTHORIZATION_SERVER_URL}/api/folder/changeName?folderId=${this.selectedFolders[0].id}&newName=${name}`
 
     return this.http.post<Folder>(url,null);
+  }
+
+  setFavorite(){
+
+    if(this.selectedFolders.length==0){
+      return;
+    }
+
+    let value = false;
+
+    this.selectedFolders.forEach(folder=>{
+      if(!folder.favorite){
+        value = true;
+      }
+    })
+
+    let folderList = this.selectedFolders[0].id;
+
+    for (let i = 1;i<this.selectedFolders.length;i++){
+      folderList += ","+this.selectedFolders[i].id
+    }
+
+    const url =`${environment.AUTHORIZATION_SERVER_URL}/api/folder/setFavorite?folderIds=${folderList}&value=${value}`
+
+    return this.http.post<Folder[]>(url,null);
+  }
+
+  getFavoriteFolder(){
+
+    const url = `${environment.AUTHORIZATION_SERVER_URL}/api/folder/getFavorites`
+
+    this.http.get<Folder[]>(url).subscribe(response=>{
+      this.favoriteFolders = response;
+    },error => {
+      console.log(error)
+    })
+
   }
 
 }

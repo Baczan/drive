@@ -1,4 +1,13 @@
-<a  [routerLink]="path" [class.logout]="logout"  (click)="handleClick()" routerLinkActive="active">
+<a *ngIf="!disableHighlight" [routerLink]="path" [class.logout]="logout"  (click)="handleClick()" routerLinkActive="active">
+  <mat-icon>
+    {{icon}}
+  </mat-icon>
+  <span>
+    {{text}}
+  </span>
+</a>
+
+<a *ngIf="disableHighlight"  [routerLink]="path" [class.logout]="logout"  (click)="handleClick()">
   <mat-icon>
     {{icon}}
   </mat-icon>

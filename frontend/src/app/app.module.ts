@@ -52,6 +52,8 @@ import {StorageSpaceGuard} from "./guards/storage-space.guard";
 import {A11yModule} from "@angular/cdk/a11y";
 import { AutofocusDirective } from './directives/autofocus.directive';
 import { FolderNameChangeComponent } from './components/file/dialogs/folder-name-change/folder-name-change.component';
+import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 
 const routes: Routes = [
@@ -119,7 +121,9 @@ const routes: Routes = [
     MatBadgeModule,
     DragulaModule.forRoot(),
     NgxDropzoneModule,
-    A11yModule
+    A11yModule,
+    MatSnackBarModule,
+    MatTooltipModule
   ],
   providers: [DatePipe,LoggedInGuard, {provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptorService, multi: true},SubscriptionGuard,StorageSpaceGuard],
   bootstrap: [AppComponent]

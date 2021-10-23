@@ -15,8 +15,20 @@
 
       <app-link icon="person" text="Konto" path="/account"></app-link>
       <mat-divider></mat-divider>
-      <app-link icon="folder" text="Pliki" path="/files"></app-link>
+      <app-link icon="folder" [disableHighlight]="checkIfFavorite()" text="Pliki" path="/files"></app-link>
       <app-link icon="payment" text="Subskrypcja" path="/subscription"></app-link>
+
+      <div *ngIf="fileService.favoriteFolders.length>0">
+
+
+
+        <div class="favoriteTitleWrapper">
+          <span class="favoriteTitleText">Ulubione foldery</span>
+        </div>
+
+        <app-link *ngFor="let folder of fileService.favoriteFolders" icon="folder_special" [text]="folder.folderName" [path]="'/files/'+folder.id"></app-link>
+
+      </div>
 
       <mat-divider></mat-divider>
 
