@@ -12,6 +12,7 @@ import com.baczan.session_authorization_server.repositories.UserRepository;
 import com.baczan.session_authorization_server.repositories.ZipRepository;
 import com.stripe.model.Invoice;
 import com.stripe.model.Subscription;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,7 @@ public class FileService {
 
 
     @Transactional
-    public FileEntity saveFile(MultipartFile file, UUID folderId, Authentication authentication) throws IOException {
+    public FileEntity saveFile(MultipartFile file, UUID folderId, Authentication authentication,boolean testFile) throws IOException {
 
         String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
         boolean hasThumbnail = false;
@@ -97,7 +98,14 @@ public class FileService {
 
 
         if (hasThumbnail) {
-            createThumbnail(fileEntity);
+
+            if(testFile){
+                createTestThumbnail(fileEntity);
+            }else{
+                createThumbnail(fileEntity);
+            }
+
+
         }
 
         fileEntity = fileRepository.save(fileEntity);
@@ -216,6 +224,23 @@ public class FileService {
         }
 
 
+    }
+
+
+    private void createTestThumbnail(FileEntity fileEntity) throws IOException {
+
+        File thumbnailFile = getPathThumbnail(fileEntity).toFile();
+        File testThumbnailFile = getPathToTestThumbnails(fileEntity.getFilename()).toFile();
+        FileUtils.copyFile(testThumbnailFile,thumbnailFile);
+
+    }
+
+    public Path getPathToTestFile(String name){
+        return Paths.get(environment.getProperty("app.file.location") + "test/" + name);
+    }
+
+    public Path getPathToTestThumbnails(String name){
+        return Paths.get(environment.getProperty("app.file.location") + "testThumbnails/" + name);
     }
 
 

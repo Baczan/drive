@@ -75,11 +75,13 @@ public class SecurityConfig implements WebMvcConfigurer {
             "/login",
             "/afterLogin",
             "/api/stripe/events",
-            "/api/stripe/success"
+            "/api/stripe/success",
+            "/testLogin"
     };
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+
         http.authorizeRequests(
                 authorizeRequests ->
                         authorizeRequests

@@ -182,6 +182,12 @@ hr{
     margin-bottom: 16px;
 }
 
+.test{
+    margin-bottom: 20px;
+    background-color: rgba(0,0,0,0.8);
+}
+
+
 
 .loginButton:hover{
     background-color: #2d3e9e;;
@@ -195,6 +201,9 @@ hr{
     background-color: #b4473b;
 }
 
+.test:hover{
+    background-color: rgba(0,0,0,0.9);
+}
 
 .error{
     color: #d62020;

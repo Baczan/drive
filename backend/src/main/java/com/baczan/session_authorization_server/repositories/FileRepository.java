@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface FileRepository extends JpaRepository<FileEntity, UUID> {
 
-    boolean existsByFilenameAndFolderId(String filename,UUID folderId);
+    boolean existsByFilenameAndFolderIdAndUser(String filename,UUID folderId,String email);
 
     List<FileEntity> getAllByFolderIdAndUser(UUID folderId,String user);
 

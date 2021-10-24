@@ -63,7 +63,7 @@ public class FileController {
     public ResponseEntity<?> upload(@RequestParam MultipartFile file, @RequestParam(required = false) UUID folderId, Authentication authentication) throws TierNotFoundException {
 
 
-        if (fileRepository.existsByFilenameAndFolderId(file.getOriginalFilename(), folderId)) {
+        if (fileRepository.existsByFilenameAndFolderIdAndUser(file.getOriginalFilename(), folderId,authentication.getName())) {
             return new ResponseEntity<>("not_unique", HttpStatus.BAD_REQUEST);
         }
 
@@ -76,7 +76,7 @@ public class FileController {
         }
 
         try {
-            return new ResponseEntity<>(fileService.saveFile(file, folderId, authentication), HttpStatus.OK);
+            return new ResponseEntity<>(fileService.saveFile(file, folderId, authentication,false), HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
             return new ResponseEntity<>("io_error", HttpStatus.BAD_REQUEST);

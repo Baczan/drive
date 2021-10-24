@@ -34,7 +34,7 @@ public class FolderController {
     public ResponseEntity<?> createFolder(@RequestParam String folderName, @RequestParam(required = false) UUID parentId, Authentication authentication) {
 
 
-        if (folderRepository.existsByFolderNameAndParentId(folderName, parentId)) {
+        if (folderRepository.existsByFolderNameAndParentIdAndUser(folderName, parentId,authentication.getName())) {
             return new ResponseEntity<>("not_unique", HttpStatus.BAD_REQUEST);
         }
 
@@ -135,7 +135,7 @@ public class FolderController {
             return new ResponseEntity<>("UNAUTHORIZED", HttpStatus.UNAUTHORIZED);
         }
 
-        if (folderRepository.existsByFolderNameAndParentId(newName, folder.getParentId())) {
+        if (folderRepository.existsByFolderNameAndParentIdAndUser(newName, folder.getParentId(),authentication.getName())) {
             return new ResponseEntity<>("not_unique", HttpStatus.BAD_REQUEST);
         }
 

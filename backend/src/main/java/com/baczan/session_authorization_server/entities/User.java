@@ -43,7 +43,7 @@ public class User {
     private List<Authority> authorities;
 
 
-    @Column(name = "createdAt", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private Date createdAt;
 

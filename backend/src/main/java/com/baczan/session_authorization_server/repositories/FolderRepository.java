@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface FolderRepository extends JpaRepository<Folder, UUID> {
 
-    boolean existsByFolderNameAndParentId(String folderName,UUID parentID);
+    boolean existsByFolderNameAndParentIdAndUser(String folderName,UUID parentID,String user);
 
     List<Folder> getAllByParentIdAndUser(UUID parentId,String user);
 
