@@ -1,0 +1,36 @@
+<div (click)="close($event)" class="main">
+
+
+  <div class="header">
+
+    <button (click)="forceClose()" class="backButton" mat-icon-button>
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <span (click)="$event.stopPropagation()">{{galleryService.photos[galleryService.currentIndex].filename}}</span>
+  </div>
+
+  <div  (swipeleft)="nextPhotoSwipe()" (swiperight)="previousPhotoSwipe()" class="photoWrapper">
+
+    <div  class="photo">
+      <img (click)="$event.stopPropagation()" [src]="getPhotoUrl(galleryService.photos[galleryService.currentIndex])">
+    </div>
+
+  </div>
+
+
+
+
+  <div *ngIf="galleryService.currentIndex>0" (click)="previousPhoto($event)" class="arrowWrapper">
+    <mat-icon class="left">
+      chevron_left
+    </mat-icon>
+  </div>
+
+  <div *ngIf="(galleryService.currentIndex+1)<galleryService.photos.length" (click)="nextPhoto($event)" class="arrowWrapper rightArrow">
+    <mat-icon class="right">
+      chevron_right
+    </mat-icon>
+  </div>
+
+</div>

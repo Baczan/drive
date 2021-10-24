@@ -294,7 +294,7 @@ public class FileController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<?> download(@RequestParam UUID fileId, Authentication authentication) {
+    public ResponseEntity<?> download(@RequestParam UUID fileId,@RequestParam(required = false) boolean displayPhoto, Authentication authentication) {
 
         Optional<FileEntity> optionalFile = fileRepository.findById(fileId);
 
@@ -311,8 +311,15 @@ public class FileController {
         //Create headers object
         HttpHeaders headers = new HttpHeaders();
 
+        String contentDispositionMode = "attachment;";
+
+        if(displayPhoto){
+            contentDispositionMode = "inline;";
+        }
+
+
         //Set filename
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileEntity.getFilename());
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, contentDispositionMode+" filename=" + fileEntity.getFilename());
 
         //Set file type
         headers.add(HttpHeaders.CONTENT_TYPE, URLConnection.guessContentTypeFromName(fileEntity.getFilename()));

@@ -16,6 +16,7 @@ import {Subscription} from "rxjs";
 import {BreakpointObserver, BreakpointState} from "@angular/cdk/layout";
 import {FileService} from "./services/file.service";
 import {ActivatedRoute, Router, RouterEvent} from "@angular/router";
+import {GalleryService} from "./services/gallery.service";
 
 @Component({
   selector: 'app-root',
@@ -46,7 +47,7 @@ export class AppComponent implements AfterViewInit,OnDestroy,OnInit{
   title = 'Dysk';
 
 
-  constructor(private widthService:WidthService,private cdr:ChangeDetectorRef, private breakpointObserver: BreakpointObserver,public fileService:FileService,public route:ActivatedRoute,public router:Router){
+  constructor(public galleryService:GalleryService,private widthService:WidthService,private cdr:ChangeDetectorRef, private breakpointObserver: BreakpointObserver,public fileService:FileService,public route:ActivatedRoute,public router:Router){
   }
 
 

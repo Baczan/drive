@@ -1,0 +1,96 @@
+:host{
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 5;
+}
+
+.main{
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  flex-direction: column;
+}
+
+.arrowWrapper{
+  height: 40px;
+  width: 40px;
+  background-color: rgb(24 24 24);
+  border-radius: 100px;
+  position: absolute;
+  top: calc(50% - 20px);
+  margin-left: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.arrowWrapper:hover{
+  background-color: #1762bf;
+}
+
+.arrowWrapper > mat-icon{
+  color: white;
+}
+
+.rightArrow{
+  right: 0;
+  margin-right: 12px;
+}
+
+.left{
+  margin-right: 2px;
+}
+
+.right{
+  margin-left: 2px
+}
+
+.header{
+  padding-top: 4px;
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.header > span{
+  margin-left: 12px;
+  margin-top: 2px;
+  font-size: 15px;
+}
+
+.backButton{
+  margin-left: 12px;
+}
+
+.photoWrapper{
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: hidden;
+  padding-bottom: 40px;
+}
+
+.photo{
+  flex: 1;
+  height: 100%;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+img{
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+@media (max-width: 600px) {
+  .arrowWrapper{
+    display: none;
+  }
+}

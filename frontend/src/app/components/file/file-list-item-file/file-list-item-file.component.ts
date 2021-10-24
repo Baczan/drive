@@ -5,6 +5,7 @@ import {FileService} from "../../../services/file.service";
 import {Router} from "@angular/router";
 import {FileEntity} from "../../../models/FileEntity";
 import {environment} from "../../../../environments/environment";
+import {GalleryService} from "../../../services/gallery.service";
 
 @Component({
   selector: 'app-file-list-item-file',
@@ -20,7 +21,7 @@ export class FileListItemFileComponent implements OnInit {
 
   ignoreNextClick = false;
 
-  constructor(public widthService:WidthService,public fileService:FileService,private router:Router) { }
+  constructor(public widthService:WidthService,public fileService:FileService,private router:Router,private galleryService:GalleryService) { }
 
   ngOnInit(): void {
   }
@@ -29,14 +30,14 @@ export class FileListItemFileComponent implements OnInit {
     return `${environment.AUTHORIZATION_SERVER_URL}/api/file/getThumbnail?fileId=${this.file.id}`;
   }
 
-  select(event:any){
+  select(event:MouseEvent){
+
 
     if(this.ignoreNextClick){
       this.ignoreNextClick=false;
       return;
     }
 
-    console.log(1)
 
     if(this.fileService.touchSelect){
 
@@ -84,6 +85,8 @@ export class FileListItemFileComponent implements OnInit {
     }
 
 
+
+
     this.ignoreNextClick = true;
 
     if(!this.fileService.touchSelect){
@@ -102,6 +105,28 @@ export class FileListItemFileComponent implements OnInit {
 
   }
 
+
+  tapped(event: any) {
+
+
+    if(!this.file.hasThumbnail){
+      return;
+    }
+
+    if(this.fileService.touchSelect){
+      return;
+    }
+
+    if (event.tapCount == 2) {
+
+      this.galleryService.loadPhotos(this.file)
+      this.galleryService.displayGallery = true;
+
+
+
+    }
+
+  }
 
 
 }
