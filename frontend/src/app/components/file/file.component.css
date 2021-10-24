@@ -76,3 +76,7 @@
   color: rgba(0,0,0,0.6);
   letter-spacing: 0.3px;
 }
+
+.toolbar > button{
+  margin-left: 6px;
+}

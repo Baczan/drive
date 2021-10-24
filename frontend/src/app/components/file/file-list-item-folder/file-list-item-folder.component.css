@@ -72,3 +72,16 @@
   padding: 2px;
   border-radius: 100px;
 }
+
+.wrapper{
+  flex: 1;
+  overflow-x: hidden;
+}
+
+
+.folderName{
+  flex: 1;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  padding-right: 32px;
+}
