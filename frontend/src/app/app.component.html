@@ -57,3 +57,5 @@
 
 
 <app-gallery *ngIf="galleryService.displayGallery"></app-gallery>
+<app-menu #menuComponent [style.left]="menuService.left+'px'" [style.top]="(menuService.top-(menuService.moveToTop?menuService.calculateHeight():0))+'px'" *ngIf="menuService.displayMenu" ></app-menu>
+

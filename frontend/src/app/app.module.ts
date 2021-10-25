@@ -55,6 +55,8 @@ import { FolderNameChangeComponent } from './components/file/dialogs/folder-name
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import { GalleryComponent } from './components/gallery/gallery.component';
+import { MenuComponent } from './components/menu/menu.component';
+import { MenuItemComponent } from './components/menu/menu-item/menu-item.component';
 
 
 const routes: Routes = [
@@ -93,7 +95,9 @@ const routes: Routes = [
     DropzoneDirective,
     AutofocusDirective,
     FolderNameChangeComponent,
-    GalleryComponent
+    GalleryComponent,
+    MenuComponent,
+    MenuItemComponent
   ],
   imports: [
     BrowserModule,

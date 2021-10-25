@@ -18,7 +18,7 @@ export class GalleryService {
   loadPhotos(fileEntity:FileEntity) {
     this.photos = this.fileService.files.filter(file => file.hasThumbnail)
     this.currentIndex = this.photos.indexOf(fileEntity);
-    
+
   }
 
 }

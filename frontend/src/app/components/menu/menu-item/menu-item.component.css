@@ -1,0 +1,23 @@
+.main{
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0px 16px;
+  margin: 2px 0;
+}
+
+.main:hover{
+  background-color: rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+
+span{
+  margin-left: 10px;
+  font-size: 15px;
+  color: rgba(0,0,0,0.85);
+  margin-top: 2px;
+}
+
+mat-icon{
+  color: rgba(0,0,0,0.8);
+}

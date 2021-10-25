@@ -13,6 +13,7 @@ import {ZipInfo} from "../models/ZipInfo";
 import {MatBottomSheetRef} from "@angular/material/bottom-sheet";
 import {FileTransferSheetComponent} from "../components/file/file-transfer-sheet/file-transfer-sheet.component";
 import {StorageSpace} from "../models/StorageSpace";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Injectable({
   providedIn: 'root'
@@ -50,7 +51,7 @@ export class FileService {
   touchSelect:boolean = false;
 
 
-  constructor(private http: HttpClient, private websocket: WebsocketService, @Inject(DOCUMENT) private document: HTMLDocument) {
+  constructor(private snackbar:MatSnackBar,private http: HttpClient, private websocket: WebsocketService, @Inject(DOCUMENT) private document: HTMLDocument) {
 
     websocket.rxStomp.watch("/user/queue/zip").subscribe(response => {
 
@@ -281,6 +282,7 @@ export class FileService {
     this.shiftSelectLastIndex = null;
     this.selectedFiles = [];
     this.selectedFolders = [];
+    this.touchSelect = false
   }
 
 
@@ -428,7 +430,26 @@ export class FileService {
 
     const url =`${environment.AUTHORIZATION_SERVER_URL}/api/folder/setFavorite?folderIds=${folderList}&value=${value}`
 
-    return this.http.post<Folder[]>(url,null);
+    return this.http.post<Folder[]>(url,null).subscribe(response=>{
+
+      response.forEach(folder=>{
+
+        let index = this.folders.findIndex(folder1=>folder1.id==folder.id);
+
+        if(index>=0){
+          this.folders[index].favorite=folder.favorite;
+        }
+
+      })
+
+      this.getFavoriteFolder();
+
+      this.selectedFolders = [];
+    },error=>{
+
+      this.snackbar.open("Błąd podczas dodawania do ulubionych","OK")
+
+    });
   }
 
   getFavoriteFolder(){

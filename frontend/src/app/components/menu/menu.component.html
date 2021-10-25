@@ -1,0 +1,11 @@
+<div class="mat-elevation-z2 main">
+  <app-menu-item text="Pobierz" icon="file_download" (click)="fileService.download()"></app-menu-item>
+  <app-menu-item text="Usuń" icon="delete" (click)="fileService.delete()"></app-menu-item>
+
+  <app-menu-item text="Zmień nazwę foldera" icon="drive_file_rename_outline" (click)="changeFolderName()" *ngIf="fileService.selectedFolders.length==1 && fileService.selectedFiles.length==0"></app-menu-item>
+
+  <app-menu-item text="Dodaj do ulubionych" icon="star" (click)="fileService.setFavorite()" *ngIf="fileService.selectedFolders.length>0 && fileService.selectedFiles.length==0 && starIconMode()"></app-menu-item>
+
+  <app-menu-item text="Usuń z ulubionych" icon="star_border" (click)="fileService.setFavorite()" *ngIf="fileService.selectedFolders.length>0 && fileService.selectedFiles.length==0 && !starIconMode()"></app-menu-item>
+
+</div>

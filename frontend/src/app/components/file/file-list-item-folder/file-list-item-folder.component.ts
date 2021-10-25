@@ -3,6 +3,7 @@ import {WidthService} from "../../../services/width.service";
 import {Folder} from "../../../models/Folder";
 import {FileService} from "../../../services/file.service";
 import {Router} from "@angular/router";
+import {MenuService} from "../../../services/menu.service";
 
 @Component({
   selector: 'app-file-list-item-folder',
@@ -17,7 +18,7 @@ export class FileListItemFolderComponent implements OnInit {
 
   ignoreNextClick: boolean = false;
 
-  constructor(public widthService: WidthService, public fileService: FileService, private router: Router) {
+  constructor(private menuService:MenuService,public widthService: WidthService, public fileService: FileService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -124,6 +125,35 @@ export class FileListItemFolderComponent implements OnInit {
 
     this.fileService.disableTouchSelectIfEmpty()
 
+  }
+
+
+  contextMenu(event:MouseEvent){
+
+    if(this.returnFolder){
+      return;
+    }
+
+    event.preventDefault()
+
+    if(!this.fileService.selectedFolders.includes(this.folder)){
+      this.fileService.clearSelection()
+      this.fileService.selectedFolders.push(this.folder)
+    }
+
+
+    if(document.body.clientWidth-event.clientX<300){
+      this.menuService.left=event.clientX-250
+    }else{
+      this.menuService.left=event.clientX
+    }
+
+    this.menuService.moveToTop = document.body.clientHeight-event.clientY<200
+
+
+
+    this.menuService.top=event.clientY
+    this.menuService.displayMenu=true
   }
 
 }

@@ -17,6 +17,7 @@ import {BreakpointObserver, BreakpointState} from "@angular/cdk/layout";
 import {FileService} from "./services/file.service";
 import {ActivatedRoute, Router, RouterEvent} from "@angular/router";
 import {GalleryService} from "./services/gallery.service";
+import {MenuService} from "./services/menu.service";
 
 @Component({
   selector: 'app-root',
@@ -24,6 +25,14 @@ import {GalleryService} from "./services/gallery.service";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterViewInit,OnDestroy,OnInit{
+
+  @HostListener('click', ['$event'])
+  onClick(event:MouseEvent) {
+
+    this.menuService.displayMenu = false;
+
+  }
+
 
   @HostListener('window:resize', ['$event'])
   onResize() {
@@ -47,7 +56,7 @@ export class AppComponent implements AfterViewInit,OnDestroy,OnInit{
   title = 'Dysk';
 
 
-  constructor(public galleryService:GalleryService,private widthService:WidthService,private cdr:ChangeDetectorRef, private breakpointObserver: BreakpointObserver,public fileService:FileService,public route:ActivatedRoute,public router:Router){
+  constructor(public menuService:MenuService,public galleryService:GalleryService,private widthService:WidthService,private cdr:ChangeDetectorRef, private breakpointObserver: BreakpointObserver,public fileService:FileService,public route:ActivatedRoute,public router:Router){
   }
 
 

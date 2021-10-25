@@ -1,5 +1,5 @@
 
-  <div  (click)="select($event)" (press)="hold($event)" (tap)="tapped($event)" [class.activated]="isSelected() && !fileService.dragging"  class="main">
+  <div (contextmenu)="contextMenu($event)"  (click)="select($event)" (press)="hold($event)" (tap)="tapped($event)" [class.activated]="isSelected() && !fileService.dragging"  class="main">
 
     <div class="wrapper">
 

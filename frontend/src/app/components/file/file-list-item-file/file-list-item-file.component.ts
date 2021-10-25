@@ -6,6 +6,7 @@ import {Router} from "@angular/router";
 import {FileEntity} from "../../../models/FileEntity";
 import {environment} from "../../../../environments/environment";
 import {GalleryService} from "../../../services/gallery.service";
+import {MenuService} from "../../../services/menu.service";
 
 @Component({
   selector: 'app-file-list-item-file',
@@ -21,7 +22,7 @@ export class FileListItemFileComponent implements OnInit {
 
   ignoreNextClick = false;
 
-  constructor(public widthService:WidthService,public fileService:FileService,private router:Router,private galleryService:GalleryService) { }
+  constructor(private menuService:MenuService,public widthService:WidthService,public fileService:FileService,private router:Router,private galleryService:GalleryService) { }
 
   ngOnInit(): void {
   }
@@ -126,6 +127,30 @@ export class FileListItemFileComponent implements OnInit {
 
     }
 
+  }
+
+  contextMenu(event:MouseEvent){
+
+    event.preventDefault()
+
+    if(!this.fileService.selectedFiles.includes(this.file)){
+      this.fileService.clearSelection()
+      this.fileService.selectedFiles.push(this.file)
+    }
+
+
+    if(document.body.clientWidth-event.clientX<300){
+      this.menuService.left=event.clientX-250
+    }else{
+      this.menuService.left=event.clientX
+    }
+
+    this.menuService.moveToTop = document.body.clientHeight-event.clientY<200
+
+
+
+    this.menuService.top=event.clientY
+    this.menuService.displayMenu=true
   }
 
 

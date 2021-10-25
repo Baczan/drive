@@ -1,0 +1,13 @@
+:host{
+  position: absolute;
+  left: 0;
+  top:0;
+  z-index: 10;
+}
+
+.main{
+  border-radius: 4px;
+  background-color: white;
+  width: 250px;
+  padding: 12px 0;
+}

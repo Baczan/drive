@@ -80,3 +80,7 @@
 .toolbar > button{
   margin-left: 6px;
 }
+
+.contextMenu{
+  width: 100px;
+}

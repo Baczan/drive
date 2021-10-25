@@ -122,26 +122,7 @@ export class FileComponent implements OnInit, AfterViewInit {
   }
 
   setFavorite(){
-    this.fileService.setFavorite()?.subscribe(response=>{
-
-      response.forEach(folder=>{
-
-        let index = this.fileService.folders.findIndex(folder1=>folder1.id==folder.id);
-
-        if(index>=0){
-          this.fileService.folders[index].favorite=folder.favorite;
-        }
-
-      })
-
-      this.fileService.getFavoriteFolder();
-
-      this.fileService.selectedFolders = [];
-    },error=>{
-
-      this.snackbar.open("Błąd podczas dodawania do ulubionych","OK")
-
-    })
+    this.fileService.setFavorite();
   }
 
   clearSelection(){
