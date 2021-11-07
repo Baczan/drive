@@ -509,7 +509,7 @@ export class FileService {
 
     if(!this.currentFolder){
 
-      if(this.selectedFiles.length==this.files.length && this.selectedFolders.length == this.folders.length){
+      if(this.selectedFolders.length == this.folders.length){
         return false;
       }
 
