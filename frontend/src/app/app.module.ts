@@ -14,10 +14,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
-import {SubscriptionComponent} from './components/subscription/subscription.component';
-import {SubscriptionCardComponent} from './components/subscription/subscription-card/subscription-card.component';
 import {MatSelectModule} from "@angular/material/select";
-import {PlanDetailsCardComponent} from './components/subscription/plan-details-card/plan-details-card.component';
+import {PlanDetailsCardComponent} from './components/new-subscription/plan-details-card/plan-details-card.component';
 import {MatRadioModule} from "@angular/material/radio";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatSidenavModule} from "@angular/material/sidenav";
@@ -66,7 +64,6 @@ const routes: Routes = [
   {path: "files", component: FileComponent, canActivate: [LoggedInGuard,SubscriptionGuard,StorageSpaceGuard]},
   {path: "files/:id", component: FileComponent, canActivate: [LoggedInGuard,SubscriptionGuard,StorageSpaceGuard]},
   {path: "subscription", component: NewSubscriptionComponent, canActivate: [LoggedInGuard,SubscriptionGuard,StorageSpaceGuard]},
-  {path: "subscription2", component: SubscriptionComponent, canActivate: [LoggedInGuard,SubscriptionGuard,StorageSpaceGuard]},
   {path: '**', redirectTo: "files",}
 ];
 
@@ -75,8 +72,6 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     PaymentComponent,
-    SubscriptionComponent,
-    SubscriptionCardComponent,
     PlanDetailsCardComponent,
     LinkComponent,
     NewSubscriptionComponent,
