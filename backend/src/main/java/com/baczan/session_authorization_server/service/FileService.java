@@ -202,7 +202,7 @@ public class FileService {
 
                 //Calculate completed zip size
                 zipSizeCompleted+=zipFile.getFileEntity().getSize();
-                
+
 
                 zipInfo.setProgress((float)zipSizeCompleted/zipInfo.getSize());
 
