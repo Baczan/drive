@@ -2,6 +2,7 @@ import {Component, HostListener, OnInit} from '@angular/core';
 import {FileService} from "../../services/file.service";
 import {FolderNameChangeComponent} from "../file/dialogs/folder-name-change/folder-name-change.component";
 import {MatDialog} from "@angular/material/dialog";
+import {TransferDialogComponent} from "../file/transfer-dialog/transfer-dialog.component";
 
 @Component({
   selector: 'app-menu',
@@ -32,6 +33,12 @@ export class MenuComponent implements OnInit {
     })
 
     return value;
+  }
+
+  openTransferDialog(){
+
+    this.dialog.open(TransferDialogComponent)
+
   }
 
 }

@@ -57,6 +57,7 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import { GalleryComponent } from './components/gallery/gallery.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { MenuItemComponent } from './components/menu/menu-item/menu-item.component';
+import { TransferDialogComponent } from './components/file/transfer-dialog/transfer-dialog.component';
 
 
 const routes: Routes = [
@@ -97,7 +98,8 @@ const routes: Routes = [
     FolderNameChangeComponent,
     GalleryComponent,
     MenuComponent,
-    MenuItemComponent
+    MenuItemComponent,
+    TransferDialogComponent
   ],
   imports: [
     BrowserModule,

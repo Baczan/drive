@@ -18,6 +18,7 @@ import {MatBottomSheet} from "@angular/material/bottom-sheet";
 import {FileTransferSheetComponent} from "./file-transfer-sheet/file-transfer-sheet.component";
 import {FolderNameChangeComponent} from "./dialogs/folder-name-change/folder-name-change.component";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {TransferDialogComponent} from "./transfer-dialog/transfer-dialog.component";
 
 @Component({
   selector: 'app-file',
@@ -130,6 +131,12 @@ export class FileComponent implements OnInit, AfterViewInit {
     this.fileService.selectedFolders = []
     this.fileService.selectedFiles = []
     this.fileService.touchSelect = false;
+
+  }
+
+  openTransferDialog(){
+
+    this.dialog.open(TransferDialogComponent)
 
   }
 

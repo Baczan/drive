@@ -1,10 +1,14 @@
 package com.baczan.session_authorization_server.controllers;
 
+import com.baczan.session_authorization_server.dtos.FolderTransferRequestBody;
+import com.baczan.session_authorization_server.dtos.TransferFolder;
+import com.baczan.session_authorization_server.dtos.TransferFolderResponse;
 import com.baczan.session_authorization_server.entities.FileEntity;
 import com.baczan.session_authorization_server.entities.Folder;
 import com.baczan.session_authorization_server.repositories.FileRepository;
 import com.baczan.session_authorization_server.repositories.FolderRepository;
 import com.baczan.session_authorization_server.service.FileService;
+import com.baczan.session_authorization_server.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +16,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/folder")
@@ -30,11 +32,14 @@ public class FolderController {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private FolderService folderService;
+
     @PostMapping("/create")
     public ResponseEntity<?> createFolder(@RequestParam String folderName, @RequestParam(required = false) UUID parentId, Authentication authentication) {
 
 
-        if (folderRepository.existsByFolderNameAndParentIdAndUser(folderName, parentId,authentication.getName())) {
+        if (folderRepository.existsByFolderNameAndParentIdAndUser(folderName, parentId, authentication.getName())) {
             return new ResponseEntity<>("not_unique", HttpStatus.BAD_REQUEST);
         }
 
@@ -135,7 +140,7 @@ public class FolderController {
             return new ResponseEntity<>("UNAUTHORIZED", HttpStatus.UNAUTHORIZED);
         }
 
-        if (folderRepository.existsByFolderNameAndParentIdAndUser(newName, folder.getParentId(),authentication.getName())) {
+        if (folderRepository.existsByFolderNameAndParentIdAndUser(newName, folder.getParentId(), authentication.getName())) {
             return new ResponseEntity<>("not_unique", HttpStatus.BAD_REQUEST);
         }
 
@@ -156,7 +161,7 @@ public class FolderController {
 
             Optional<Folder> optionalFolder = folderRepository.findById(folderId);
 
-            if(optionalFolder.isEmpty()){
+            if (optionalFolder.isEmpty()) {
                 return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
             }
 
@@ -174,16 +179,149 @@ public class FolderController {
         });
 
 
-
-
         folders = folderRepository.saveAll(folders);
 
         return new ResponseEntity<>(folders, HttpStatus.OK);
     }
 
     @GetMapping("/getFavorites")
-    public ResponseEntity<?> getFavorites(Authentication authentication){
-        return new ResponseEntity<>(folderRepository.getAllByUserAndFavorite(authentication.getName(),true),HttpStatus.OK);
+    public ResponseEntity<?> getFavorites(Authentication authentication) {
+        return new ResponseEntity<>(folderRepository.getAllByUserAndFavorite(authentication.getName(), true), HttpStatus.OK);
+    }
+
+
+    @PostMapping("/transferOptions")
+    public ResponseEntity<?> getTransferOptions(@RequestParam(required = false) UUID folderId, @RequestBody List<UUID> foldersToTransfer, Authentication authentication) {
+
+
+        Folder folder = null;
+
+        if (folderId != null) {
+
+            Optional<Folder> optionalFolder = folderRepository.findById(folderId);
+
+            if (optionalFolder.isEmpty()) {
+                return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
+            }
+            folder = optionalFolder.get();
+
+            if (!Objects.equals(folder.getUser(), authentication.getName())) {
+                return new ResponseEntity<>("unauthorized", HttpStatus.UNAUTHORIZED);
+            }
+
+        }
+
+
+        List<Folder> possibleFolders = folderRepository.getAllByParentIdAndUser(folderId, authentication.getName());
+
+        List<TransferFolder> transferFolders = possibleFolders.stream().map(TransferFolder::new).collect(Collectors.toList());
+
+
+        for (UUID folderToTransferId : foldersToTransfer) {
+
+            Optional<Folder> optionalFolderToTransfer = folderRepository.findById(folderToTransferId);
+
+            if (optionalFolderToTransfer.isEmpty()) {
+                return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
+            }
+            Folder folderToTransfer = optionalFolderToTransfer.get();
+            if (!Objects.equals(folderToTransfer.getUser(), authentication.getName())) {
+                return new ResponseEntity<>("unauthorized", HttpStatus.UNAUTHORIZED);
+            }
+
+
+            for (TransferFolder transferFolder : transferFolders) {
+
+                if (transferFolder.isCanBeTransferred()) {
+
+                    transferFolder.setCanBeTransferred(folderService.canFolderBeTransferred(folderToTransfer, transferFolder.getFolder()));
+
+                }
+
+            }
+
+        }
+
+        List<FileEntity> files = fileRepository.getAllByFolderIdAndUser(folderId, authentication.getName());
+
+        TransferFolderResponse transferFolderResponse = new TransferFolderResponse(folder, transferFolders, files);
+
+
+        return new ResponseEntity<>(transferFolderResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<?> transfer(@RequestParam(required = false) UUID folderId, @RequestBody FolderTransferRequestBody body, Authentication authentication) {
+
+
+        Folder folder = null;
+
+        if (folderId != null) {
+
+            Optional<Folder> optionalFolder = folderRepository.findById(folderId);
+
+            if (optionalFolder.isEmpty()) {
+                return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
+            }
+            folder = optionalFolder.get();
+            if (!Objects.equals(folder.getUser(), authentication.getName())) {
+                return new ResponseEntity<>("unauthorized", HttpStatus.UNAUTHORIZED);
+            }
+
+
+        }
+
+
+        List<Folder> foldersToTransfer = new ArrayList<>();
+
+        for (UUID folderToTransferId : body.getFolders()) {
+
+            Optional<Folder> optionalFolderToTransfer = folderRepository.findById(folderToTransferId);
+
+            if (optionalFolderToTransfer.isEmpty()) {
+                return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
+            }
+
+            Folder folderToTransfer = optionalFolderToTransfer.get();
+
+            if (!Objects.equals(folderToTransfer.getUser(), authentication.getName())) {
+                return new ResponseEntity<>("unauthorized", HttpStatus.UNAUTHORIZED);
+            }
+
+            foldersToTransfer.add(folderToTransfer);
+        }
+
+        List<FileEntity> filesToTransfer = new ArrayList<>();
+
+        for (UUID fileId : body.getFiles()) {
+
+            Optional<FileEntity> optionalFile = fileRepository.findById(fileId);
+
+            if (optionalFile.isEmpty()) {
+                return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
+            }
+
+            FileEntity fileEntity = optionalFile.get();
+
+            if (!Objects.equals(fileEntity.getUser(), authentication.getName())) {
+                return new ResponseEntity<>("unauthorized", HttpStatus.UNAUTHORIZED);
+            }
+
+            filesToTransfer.add(fileEntity);
+
+        }
+
+        for (Folder folderToTransfer : foldersToTransfer) {
+            folderService.transferFolder(folderToTransfer, folder);
+        }
+
+        for (FileEntity fileToTransfer : filesToTransfer) {
+            fileToTransfer.setFolderId(folderId);
+        }
+
+        fileRepository.saveAll(filesToTransfer);
+
+        return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
 }

@@ -1,0 +1,43 @@
+<div class="main">
+  <div class="header">
+
+    <button *ngIf="currentFolder" (click)="goBack()" mat-icon-button>
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <div class="folderName" [class.arrowDisabled]="!currentFolder">
+      {{currentFolder==null?"Pliki":currentFolder.folderName}}
+    </div>
+
+  </div>
+
+
+  <div class="wrapper" *ngIf="folderTransferOptions.length>0 || files.length>0">
+    <div class="folder" *ngFor="let folder of folderTransferOptions" [class.disabled]="!folder.canBeTransferred" (click)="changeFolder(folder.folder.id)">
+      <mat-icon class="icon">folder</mat-icon>
+      <span class="folderText">{{folder.folder.folderName}}</span>
+    </div>
+
+    <div class="folder disabled" *ngFor="let file of files">
+      <mat-icon class="icon">{{file.filename | icon}}</mat-icon>
+      <span class="folderText">{{file.filename}}</span>
+    </div>
+
+  </div>
+
+  <div class="wrapper emptyWrapper" *ngIf="folderTransferOptions.length==0 && files.length==0">
+
+    <div>
+      Brak plików
+    </div>
+  </div>
+
+  <div class="buttonWrapper">
+    <button (click)="transfer()" mat-raised-button [disabled]="!canTransfer()" color="primary">
+      Przenieś tutaj
+    </button>
+  </div>
+
+
+</div>
+

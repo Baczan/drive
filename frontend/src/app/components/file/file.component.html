@@ -45,6 +45,12 @@
         </mat-icon>
       </button>
 
+      <button (click)="openTransferDialog()" *ngIf="fileService.transferIconShowing()" mat-icon-button matTooltip="Przenieś plik lub folder">
+        <mat-icon class="icon">
+          drive_file_move
+        </mat-icon>
+      </button>
+
       <button *ngIf="fileService.currentZipFiles.length>0 || fileService.uploading.length>0" (click)="openBottomSheet()" mat-icon-button>
         <mat-icon [matBadge]="badgeNumber()" [matBadgeHidden]="badgeNumber()==0" matBadgeSize="small" matBadgeColor="accent" class="icon rotated">
           autorenew

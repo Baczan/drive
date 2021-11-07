@@ -14,6 +14,9 @@ import {MatBottomSheetRef} from "@angular/material/bottom-sheet";
 import {FileTransferSheetComponent} from "../components/file/file-transfer-sheet/file-transfer-sheet.component";
 import {StorageSpace} from "../models/StorageSpace";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {TransferFolder} from "../models/TransferFolder";
+import {TransferFolderResponse} from "../models/TransferFolderResponse";
+import {TransferRequestBody} from "../models/TransferRequestBody";
 
 @Injectable({
   providedIn: 'root'
@@ -39,34 +42,34 @@ export class FileService {
   currentSort = "name";
   sortDirection = "asc";
 
-  currentZipFiles:ZipInfo[] = [];
-  zipDeleted:EventEmitter<boolean> = new EventEmitter<boolean>();
+  currentZipFiles: ZipInfo[] = [];
+  zipDeleted: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  dragging:boolean = false;
+  dragging: boolean = false;
 
-  storageSpace:StorageSpace;
+  storageSpace: StorageSpace;
 
-  favoriteFolders:Folder[] = []
+  favoriteFolders: Folder[] = []
 
-  touchSelect:boolean = false;
+  touchSelect: boolean = false;
 
 
-  constructor(private snackbar:MatSnackBar,private http: HttpClient, private websocket: WebsocketService, @Inject(DOCUMENT) private document: HTMLDocument) {
+  constructor(private snackbar: MatSnackBar, private http: HttpClient, private websocket: WebsocketService, @Inject(DOCUMENT) private document: HTMLDocument) {
 
     websocket.rxStomp.watch("/user/queue/zip").subscribe(response => {
 
-      let zipInfo:ZipInfo = JSON.parse(response.body);
+      let zipInfo: ZipInfo = JSON.parse(response.body);
 
-      let index = this.currentZipFiles.findIndex(zipInfo1=>{
-        return zipInfo1.id==zipInfo.id
+      let index = this.currentZipFiles.findIndex(zipInfo1 => {
+        return zipInfo1.id == zipInfo.id
       });
 
-      if(index>=0){
+      if (index >= 0) {
 
-        this.currentZipFiles[index].error=zipInfo.error;
-        this.currentZipFiles[index].progress=zipInfo.progress;
+        this.currentZipFiles[index].error = zipInfo.error;
+        this.currentZipFiles[index].progress = zipInfo.progress;
 
-        if(zipInfo.completed){
+        if (zipInfo.completed) {
 
           const url = `${environment.AUTHORIZATION_SERVER_URL}/api/file/downloadZip?zipId=${zipInfo.id}`;
 
@@ -75,7 +78,7 @@ export class FileService {
           href.href = url;
           href.click();
 
-          this.currentZipFiles.splice(index,1);
+          this.currentZipFiles.splice(index, 1);
           this.zipDeleted.emit(true);
         }
 
@@ -176,7 +179,7 @@ export class FileService {
 
           this.clearSelection();
           this.sort();
-          this.touchSelect=false;
+          this.touchSelect = false;
 
         })
         , finalize(() => {
@@ -220,11 +223,11 @@ export class FileService {
 
       let url = `${environment.AUTHORIZATION_SERVER_URL}/api/file/downloadMultiple?filesId=${filesId}&foldersId=${foldersId}`;
 
-      if(this.currentFolderId!=null){
-        url+=`&parentId=${this.currentFolderId}`
+      if (this.currentFolderId != null) {
+        url += `&parentId=${this.currentFolderId}`
       }
 
-      this.http.get<ZipInfo>(url).subscribe(response=>{
+      this.http.get<ZipInfo>(url).subscribe(response => {
 
         this.currentZipFiles.push(response);
       })
@@ -316,13 +319,13 @@ export class FileService {
 
 
   sortByName() {
-    this.files.sort((a, b) => (a.filename > b.filename) ? 1 : -1);
-    this.folders.sort((a, b) => (a.folderName > b.folderName) ? 1 : -1);
+    this.files.sort((a, b) => (a.filename.toLowerCase() > b.filename.toLowerCase()) ? 1 : -1);
+    this.folders.sort((a, b) => (a.folderName.toLowerCase() > b.folderName.toLowerCase()) ? 1 : -1);
   }
 
   sortByNameDesc() {
-    this.files.sort((a, b) => (a.filename < b.filename) ? 1 : -1);
-    this.folders.sort((a, b) => (a.folderName < b.folderName) ? 1 : -1);
+    this.files.sort((a, b) => (a.filename.toLowerCase() < b.filename.toLowerCase()) ? 1 : -1);
+    this.folders.sort((a, b) => (a.folderName.toLowerCase() < b.folderName.toLowerCase()) ? 1 : -1);
   }
 
   sortBySize() {
@@ -342,15 +345,15 @@ export class FileService {
   }
 
 
-  delete(){
+  delete() {
 
-    this.selectedFiles.forEach(file=>{
+    this.selectedFiles.forEach(file => {
       this.deleteFile(file)
     })
 
     this.selectedFiles = [];
 
-    this.selectedFolders.forEach(folder=>{
+    this.selectedFolders.forEach(folder => {
       this.deleteFolder(folder)
     })
 
@@ -358,86 +361,86 @@ export class FileService {
 
   }
 
-  deleteFile(fileEntity:FileEntity) {
+  deleteFile(fileEntity: FileEntity) {
 
     const url = `${environment.AUTHORIZATION_SERVER_URL}/api/file/deleteFile?fileId=${fileEntity.id}`
 
-    this.http.delete(url,{responseType:"text"}).subscribe(response=>{
+    this.http.delete(url, {responseType: "text"}).subscribe(response => {
 
       this.getStorageSpace()
-      this.files.splice(this.files.indexOf(fileEntity),1);
-    },error => {
+      this.files.splice(this.files.indexOf(fileEntity), 1);
+    }, error => {
       console.log(error)
     })
 
   }
 
-  deleteFolder(folder:Folder){
+  deleteFolder(folder: Folder) {
 
     const url = `${environment.AUTHORIZATION_SERVER_URL}/api/folder/deleteFolder?folderId=${folder.id}`
 
-    this.http.delete(url,{responseType:"text"}).subscribe(response=>{
+    this.http.delete(url, {responseType: "text"}).subscribe(response => {
 
       this.getStorageSpace()
-      this.folders.splice(this.folders.indexOf(folder),1);
+      this.folders.splice(this.folders.indexOf(folder), 1);
 
       this.getFavoriteFolder()
-    },error => {
+    }, error => {
       console.log(error)
     })
 
   }
 
-  getStorageSpace(){
+  getStorageSpace() {
 
     const url = `${environment.AUTHORIZATION_SERVER_URL}/api/file/storageSpace`;
 
-    this.http.get<StorageSpace>(url).subscribe(response=>{
+    this.http.get<StorageSpace>(url).subscribe(response => {
       this.storageSpace = response;
       console.log(this.storageSpace)
-    },error => {
+    }, error => {
       console.log(error)
     })
 
   }
 
-  changeFolderName(name:string){
+  changeFolderName(name: string) {
 
     const url = `${environment.AUTHORIZATION_SERVER_URL}/api/folder/changeName?folderId=${this.selectedFolders[0].id}&newName=${name}`
 
-    return this.http.post<Folder>(url,null);
+    return this.http.post<Folder>(url, null);
   }
 
-  setFavorite(){
+  setFavorite() {
 
-    if(this.selectedFolders.length==0){
+    if (this.selectedFolders.length == 0) {
       return;
     }
 
     let value = false;
 
-    this.selectedFolders.forEach(folder=>{
-      if(!folder.favorite){
+    this.selectedFolders.forEach(folder => {
+      if (!folder.favorite) {
         value = true;
       }
     })
 
     let folderList = this.selectedFolders[0].id;
 
-    for (let i = 1;i<this.selectedFolders.length;i++){
-      folderList += ","+this.selectedFolders[i].id
+    for (let i = 1; i < this.selectedFolders.length; i++) {
+      folderList += "," + this.selectedFolders[i].id
     }
 
-    const url =`${environment.AUTHORIZATION_SERVER_URL}/api/folder/setFavorite?folderIds=${folderList}&value=${value}`
+    const url = `${environment.AUTHORIZATION_SERVER_URL}/api/folder/setFavorite?folderIds=${folderList}&value=${value}`
 
-    return this.http.post<Folder[]>(url,null).subscribe(response=>{
+    return this.http.post<Folder[]>(url, null).subscribe(response => {
 
-      response.forEach(folder=>{
+      response.forEach(folder => {
 
-        let index = this.folders.findIndex(folder1=>folder1.id==folder.id);
+        let index = this.folders.findIndex(folder1 => folder1.id == folder.id);
 
-        if(index>=0){
-          this.folders[index].favorite=folder.favorite;
+        if (index >= 0) {
+          this.folders[index].favorite = folder.favorite;
         }
 
       })
@@ -445,32 +448,75 @@ export class FileService {
       this.getFavoriteFolder();
 
       this.selectedFolders = [];
-    },error=>{
+    }, error => {
 
-      this.snackbar.open("Błąd podczas dodawania do ulubionych","OK")
+      this.snackbar.open("Błąd podczas dodawania do ulubionych", "OK")
 
     });
   }
 
-  getFavoriteFolder(){
+  getFavoriteFolder() {
 
     const url = `${environment.AUTHORIZATION_SERVER_URL}/api/folder/getFavorites`
 
-    this.http.get<Folder[]>(url).subscribe(response=>{
+    this.http.get<Folder[]>(url).subscribe(response => {
       this.favoriteFolders = response;
-    },error => {
+    }, error => {
       console.log(error)
     })
 
   }
 
-  disableTouchSelectIfEmpty(){
+  disableTouchSelectIfEmpty() {
 
-    if(this.touchSelect && this.selectedFiles.length==0 && this.selectedFolders.length==0){
-      this.touchSelect=false;
+    if (this.touchSelect && this.selectedFiles.length == 0 && this.selectedFolders.length == 0) {
+      this.touchSelect = false;
     }
 
   }
 
+  getTransferOptions(folderId: any) {
+
+    let url = `${environment.AUTHORIZATION_SERVER_URL}/api/folder/transferOptions`;
+
+    if (folderId) {
+      url += "?folderId=" + folderId;
+    }
+
+
+    let folders: string[] = this.selectedFolders.map(folder => folder.id);
+
+    return this.http.post<TransferFolderResponse>(url, folders);
+  }
+
+
+  transfer(folderId: any){
+    let url = `${environment.AUTHORIZATION_SERVER_URL}/api/folder/transfer`;
+
+    if (folderId) {
+      url += "?folderId=" + folderId;
+    }
+
+    let body:TransferRequestBody = new TransferRequestBody();
+
+    body.folders = this.selectedFolders.map(folder=>folder.id);
+    body.files = this.selectedFiles.map(file=>file.id);
+
+    return this.http.post(url,body,{responseType:"text"});
+  }
+
+  transferIconShowing():boolean{
+
+    if(!this.currentFolder){
+
+      if(this.selectedFiles.length==this.files.length && this.selectedFolders.length == this.folders.length){
+        return false;
+      }
+
+    }
+
+    return this.selectedFolders.length > 0 || this.selectedFiles.length > 0;
+
+  }
 }
 
