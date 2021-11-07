@@ -397,8 +397,7 @@ public class StripeController {
 
             invoice = Invoice.upcoming(invoiceUpcomingParams);
         }
-
-
+        
 
         return stripeService.updateSubscription(subscription, invoice, customerEntity.getUserEmail());
     }

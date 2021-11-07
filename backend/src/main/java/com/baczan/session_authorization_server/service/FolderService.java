@@ -31,7 +31,7 @@ public class FolderService {
 
     public void transferFolder(Folder folderToTransfer,Folder destinationFolder){
 
-        
+
         List<Folder> children = folderRepository.getAllByAncestryIsStartingWith(getFolderFullPath(folderToTransfer));
 
         if(destinationFolder==null){

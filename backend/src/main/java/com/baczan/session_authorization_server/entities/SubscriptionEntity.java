@@ -73,7 +73,7 @@ public class SubscriptionEntity {
             this.total = 0;
         }else {
             this.periodEnd = invoice.getPeriodEnd();
-            this.total = invoice.getTotal();
+            this.total = invoice.getAmountDue();
         }
 
 
