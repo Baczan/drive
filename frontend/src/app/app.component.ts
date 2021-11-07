@@ -18,16 +18,17 @@ import {FileService} from "./services/file.service";
 import {ActivatedRoute, Router, RouterEvent} from "@angular/router";
 import {GalleryService} from "./services/gallery.service";
 import {MenuService} from "./services/menu.service";
+import {AuthService} from "../modules/auth/services/auth.service";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit,OnDestroy,OnInit{
+export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
 
   @HostListener('click', ['$event'])
-  onClick(event:MouseEvent) {
+  onClick(event: MouseEvent) {
 
     this.menuService.displayMenu = false;
 
@@ -40,23 +41,31 @@ export class AppComponent implements AfterViewInit,OnDestroy,OnInit{
     this.updateToWidth(this.widthService.width);
   }
 
-  @ViewChild("drawerWrapper") drawerWrapper:ElementRef;
-  @ViewChild("innerDrawerWrapper") innerDrawerWrapper:ElementRef;
-  @ViewChild("drawer") drawer:MatDrawer;
+  @ViewChild("drawerWrapper") drawerWrapper: ElementRef;
+  @ViewChild("innerDrawerWrapper") innerDrawerWrapper: ElementRef;
+  @ViewChild("drawer") drawer: MatDrawer;
 
-  hasBackdrop:boolean = true;
-  mode:MatDrawerMode = 'over';
-  opened:boolean = false;
-  previousWidth:Width;
+  hasBackdrop: boolean = true;
+  mode: MatDrawerMode = 'over';
+  opened: boolean = false;
+  previousWidth: Width;
 
 
-  widthSubscription:Subscription;
-  breakPointSubscription:Subscription;
+  widthSubscription: Subscription;
+  breakPointSubscription: Subscription;
 
   title = 'Dysk';
 
 
-  constructor(public menuService:MenuService,public galleryService:GalleryService,private widthService:WidthService,private cdr:ChangeDetectorRef, private breakpointObserver: BreakpointObserver,public fileService:FileService,public route:ActivatedRoute,public router:Router){
+  constructor(public menuService: MenuService,
+              public galleryService: GalleryService,
+              private widthService: WidthService,
+              private cdr: ChangeDetectorRef,
+              private breakpointObserver: BreakpointObserver,
+              public fileService: FileService,
+              public route: ActivatedRoute,
+              public router: Router,
+              public authService:AuthService) {
   }
 
 
@@ -82,31 +91,30 @@ export class AppComponent implements AfterViewInit,OnDestroy,OnInit{
 
   }
 
-  updateWidth(){
-    this.widthService.width = new Width(this.drawerWrapper.nativeElement.offsetWidth,this.innerDrawerWrapper.nativeElement.offsetWidth);
-    this.widthService.widthEvent.emit(new Width(this.drawerWrapper.nativeElement.offsetWidth,this.innerDrawerWrapper.nativeElement.offsetWidth))
+  updateWidth() {
+    this.widthService.width = new Width(this.drawerWrapper.nativeElement.offsetWidth, this.innerDrawerWrapper.nativeElement.offsetWidth);
+    this.widthService.widthEvent.emit(new Width(this.drawerWrapper.nativeElement.offsetWidth, this.innerDrawerWrapper.nativeElement.offsetWidth))
   }
 
 
-  updateToWidth(width:Width){
-    if(width){
+  updateToWidth(width: Width) {
+    if (width) {
 
-      if(width.fullWidth<=1000){
+      if (width.fullWidth <= 1000) {
         this.hasBackdrop = true;
-        this.mode="over";
+        this.mode = "over";
 
-        if(this.previousWidth && this.previousWidth.fullWidth>1000){
+        if (this.previousWidth && this.previousWidth.fullWidth > 1000) {
           this.drawer.close();
         }
 
 
-
-      }else{
+      } else {
         this.hasBackdrop = false;
-        this.mode="side";
+        this.mode = "side";
 
 
-        if(this.previousWidth && this.previousWidth.fullWidth<1000){
+        if (this.previousWidth && this.previousWidth.fullWidth < 1000) {
           this.drawer.open();
         }
       }
@@ -117,14 +125,14 @@ export class AppComponent implements AfterViewInit,OnDestroy,OnInit{
     }
   }
 
-  isDifferentFromPreviousWidth(width:Width):boolean{
-    if(this.previousWidth){
+  isDifferentFromPreviousWidth(width: Width): boolean {
+    if (this.previousWidth) {
 
-      if(this.previousWidth.fullWidth!=width.fullWidth){
+      if (this.previousWidth.fullWidth != width.fullWidth) {
         return true;
       }
 
-      if(this.previousWidth.containerWidth!=width.containerWidth){
+      if (this.previousWidth.containerWidth != width.containerWidth) {
         return true;
       }
 
@@ -139,19 +147,19 @@ export class AppComponent implements AfterViewInit,OnDestroy,OnInit{
     this.breakPointSubscription.unsubscribe();
   }
 
-  checkIfFavorite(){
+  checkIfFavorite() {
 
-   let disableFileHighlight = false;
+    let disableFileHighlight = false;
 
     let urlSplit = location.pathname.split("/")
 
-    if(urlSplit.length==3){
+    if (urlSplit.length == 3) {
 
-      if(urlSplit[1]=="files"){
+      if (urlSplit[1] == "files") {
 
-        let index = this.fileService.favoriteFolders.findIndex(folder=>folder.id==urlSplit[2])
+        let index = this.fileService.favoriteFolders.findIndex(folder => folder.id == urlSplit[2])
 
-        disableFileHighlight = index>=0;
+        disableFileHighlight = index >= 0;
       }
 
     }

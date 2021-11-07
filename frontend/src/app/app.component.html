@@ -13,7 +13,7 @@
 
     <mat-drawer (openedChange)="updateWidth()" [opened]="opened" [mode]="mode" mode="side" #drawer class="mat-elevation-z1">
 
-      <app-link class="accountLink" icon="person" text="Konto" path="/account" [drawer]="drawer"></app-link>
+      <app-link style="pointer-events: none" class="accountLink" icon="person" [text]="authService.user.email?authService.user.email:'email'" path="/account" [drawer]="drawer"></app-link>
       <mat-divider></mat-divider>
       <app-link icon="folder" [disableHighlight]="checkIfFavorite()" text="Pliki" path="/files" [drawer]="drawer"></app-link>
       <app-link icon="payment" text="Subskrypcja" path="/subscription" [drawer]="drawer"></app-link>

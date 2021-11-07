@@ -4,9 +4,9 @@
 
   <app-menu-item text="Zmień nazwę folderu" icon="drive_file_rename_outline" (click)="changeFolderName()" *ngIf="fileService.selectedFolders.length==1 && fileService.selectedFiles.length==0"></app-menu-item>
 
-  <app-menu-item text="Dodaj do ulubionych" icon="star" (click)="fileService.setFavorite()" *ngIf="fileService.selectedFolders.length>0 && fileService.selectedFiles.length==0 && starIconMode()"></app-menu-item>
+  <app-menu-item text="Dodaj do ulubionych" icon="star_border" (click)="fileService.setFavorite()" *ngIf="fileService.selectedFolders.length>0 && fileService.selectedFiles.length==0 && starIconMode()"></app-menu-item>
 
-  <app-menu-item text="Usuń z ulubionych" icon="star_border" (click)="fileService.setFavorite()" *ngIf="fileService.selectedFolders.length>0 && fileService.selectedFiles.length==0 && !starIconMode()"></app-menu-item>
+  <app-menu-item text="Usuń z ulubionych" icon="star" (click)="fileService.setFavorite()" *ngIf="fileService.selectedFolders.length>0 && fileService.selectedFiles.length==0 && !starIconMode()"></app-menu-item>
 
   <app-menu-item text="Przenieś" icon="drive_file_move" (click)="openTransferDialog()" *ngIf="fileService.transferIconShowing()"></app-menu-item>
 

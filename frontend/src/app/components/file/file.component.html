@@ -28,13 +28,13 @@
 
       <button *ngIf="fileService.selectedFolders.length>0 && fileService.selectedFiles.length==0 && starIconMode()" (click)="setFavorite()" mat-icon-button matTooltip="Dodaj do ulubionych">
         <mat-icon  class="icon">
-          star
+          star_border
         </mat-icon>
       </button>
 
       <button *ngIf="fileService.selectedFolders.length>0 && fileService.selectedFiles.length==0 && !starIconMode()" (click)="setFavorite()" mat-icon-button matTooltip="Usuń z ulubionych">
         <mat-icon class="icon">
-          star_border
+          star
         </mat-icon>
       </button>
 
