@@ -1,7 +1,9 @@
 package com.baczan.session_authorization_server.exceptionHandlers;
 
+import com.baczan.session_authorization_server.exceptions.FileNotFoundException;
 import com.baczan.session_authorization_server.exceptions.TierNotFoundException;
 
+import com.baczan.session_authorization_server.exceptions.UnauthorizedException;
 import com.stripe.exception.StripeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = {java.lang.IllegalArgumentException.class})
     public ResponseEntity<?> handleIllegalArgument(Exception exception){
         return new ResponseEntity<>("illegal_argument", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {FileNotFoundException.class})
+    public ResponseEntity<?> handleBadRequestException(Exception exception){
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {UnauthorizedException.class})
+    public ResponseEntity<?> handleUnauthorized(Exception exception){
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
 

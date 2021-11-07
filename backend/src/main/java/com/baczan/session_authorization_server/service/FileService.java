@@ -6,7 +6,9 @@ import com.baczan.session_authorization_server.entities.FileEntity;
 import com.baczan.session_authorization_server.entities.SubscriptionEntity;
 import com.baczan.session_authorization_server.entities.User;
 import com.baczan.session_authorization_server.entities.ZipInfo;
+import com.baczan.session_authorization_server.exceptions.FileNotFoundException;
 import com.baczan.session_authorization_server.exceptions.TierNotFoundException;
+import com.baczan.session_authorization_server.exceptions.UnauthorizedException;
 import com.baczan.session_authorization_server.repositories.FileRepository;
 import com.baczan.session_authorization_server.repositories.UserRepository;
 import com.baczan.session_authorization_server.repositories.ZipRepository;
@@ -17,6 +19,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
@@ -32,10 +36,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -245,5 +246,21 @@ public class FileService {
     }
 
 
+    public FileEntity getFileEntity(UUID fileId,Authentication authentication) throws FileNotFoundException, UnauthorizedException {
+
+        Optional<FileEntity> optionalFile = fileRepository.findById(fileId);
+
+        if (optionalFile.isEmpty()) {
+            throw new FileNotFoundException();
+        }
+
+        FileEntity fileEntity = optionalFile.get();
+
+        if (!fileEntity.getUser().equals(authentication.getName())) {
+            throw new UnauthorizedException();
+        }
+
+        return fileEntity;
+    }
 
 }

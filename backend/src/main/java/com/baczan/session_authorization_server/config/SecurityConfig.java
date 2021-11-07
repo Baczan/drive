@@ -146,6 +146,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     }
 
 
+
     @Bean
     public TierService tierService(){
         TierService tierService = new TierService();
@@ -153,7 +154,6 @@ public class SecurityConfig implements WebMvcConfigurer {
         tierService.add(new Tier("basic","price_1JbwP5BZFHL9NjRl6w86kL8x", 15000000000L));
         tierService.add(new Tier("standard","price_1JbwPpBZFHL9NjRlqri7q65A", 50000000000L));
         tierService.add(new Tier("premium","price_1JbwQhBZFHL9NjRlVNfoG7QH", 100000000000L));
-
         return tierService;
     }
 

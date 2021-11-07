@@ -1,11 +1,18 @@
 package com.baczan.session_authorization_server.service;
 
+import com.baczan.session_authorization_server.entities.FileEntity;
 import com.baczan.session_authorization_server.entities.Folder;
+import com.baczan.session_authorization_server.exceptions.FileNotFoundException;
+import com.baczan.session_authorization_server.exceptions.FolderNotFoundException;
+import com.baczan.session_authorization_server.exceptions.UnauthorizedException;
 import com.baczan.session_authorization_server.repositories.FolderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class FolderService {
@@ -60,6 +67,25 @@ public class FolderService {
 
         folderRepository.saveAll(children);
         folderRepository.save(folderToTransfer);
+    }
+
+
+
+    public Folder getFolder(UUID folderId, Authentication authentication) throws UnauthorizedException, FolderNotFoundException {
+
+        Optional<Folder> optionalFolder = folderRepository.findById(folderId);
+
+        if (optionalFolder.isEmpty()) {
+            throw new FolderNotFoundException();
+        }
+
+        Folder folder = optionalFolder.get();
+
+        if (!folder.getUser().equals(authentication.getName())) {
+            throw new UnauthorizedException();
+        }
+
+        return folder;
     }
 
 }

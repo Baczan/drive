@@ -5,6 +5,9 @@ import com.baczan.session_authorization_server.dtos.TransferFolder;
 import com.baczan.session_authorization_server.dtos.TransferFolderResponse;
 import com.baczan.session_authorization_server.entities.FileEntity;
 import com.baczan.session_authorization_server.entities.Folder;
+import com.baczan.session_authorization_server.exceptions.FileNotFoundException;
+import com.baczan.session_authorization_server.exceptions.FolderNotFoundException;
+import com.baczan.session_authorization_server.exceptions.UnauthorizedException;
 import com.baczan.session_authorization_server.repositories.FileRepository;
 import com.baczan.session_authorization_server.repositories.FolderRepository;
 import com.baczan.session_authorization_server.service.FileService;
@@ -23,22 +26,25 @@ import java.util.stream.Collectors;
 @RequestMapping("api/folder")
 public class FolderController {
 
-    @Autowired
-    private FolderRepository folderRepository;
+    private final FolderRepository folderRepository;
 
-    @Autowired
-    private FileRepository fileRepository;
+    private final FileRepository fileRepository;
 
-    @Autowired
-    private FileService fileService;
+    private final FileService fileService;
 
-    @Autowired
-    private FolderService folderService;
+    private final FolderService folderService;
+
+    public FolderController(FolderRepository folderRepository, FileRepository fileRepository, FileService fileService, FolderService folderService) {
+        this.folderRepository = folderRepository;
+        this.fileRepository = fileRepository;
+        this.fileService = fileService;
+        this.folderService = folderService;
+    }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createFolder(@RequestParam String folderName, @RequestParam(required = false) UUID parentId, Authentication authentication) {
+    public ResponseEntity<?> createFolder(@RequestParam String folderName, @RequestParam(required = false) UUID parentId, Authentication authentication) throws FolderNotFoundException, UnauthorizedException {
 
-
+        //Check if the name is unique in current folder
         if (folderRepository.existsByFolderNameAndParentIdAndUser(folderName, parentId, authentication.getName())) {
             return new ResponseEntity<>("not_unique", HttpStatus.BAD_REQUEST);
         }
@@ -51,16 +57,11 @@ public class FolderController {
 
         } else {
 
-            Optional<Folder> optionalFolder = folderRepository.findById(parentId);
-
-            if (optionalFolder.isEmpty()) {
-                return new ResponseEntity<>("parent_folder_not_found", HttpStatus.BAD_REQUEST);
-            }
-
-            Folder parentFolder = optionalFolder.get();
+            Folder parentFolder = folderService.getFolder(parentId, authentication);
 
             Folder folder = new Folder(UUID.randomUUID(), authentication.getName(), folderName, null, parentId);
 
+            //Compose ancestry
             if (parentFolder.getAncestry() == null) {
                 folder.setAncestry(parentId.toString());
             } else {
@@ -75,19 +76,9 @@ public class FolderController {
     }
 
     @DeleteMapping("/deleteFolder")
-    public ResponseEntity<?> deleteFolder(@RequestParam UUID folderId, Authentication authentication) {
+    public ResponseEntity<?> deleteFolder(@RequestParam UUID folderId, Authentication authentication) throws FolderNotFoundException, UnauthorizedException {
 
-        Optional<Folder> optionalFolder = folderRepository.findById(folderId);
-
-        if (optionalFolder.isEmpty()) {
-            return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
-        }
-
-        Folder folder = optionalFolder.get();
-
-        if (!folder.getUser().equals(authentication.getName())) {
-            return new ResponseEntity<>("UNAUTHORIZED", HttpStatus.UNAUTHORIZED);
-        }
+        Folder folder = folderService.getFolder(folderId, authentication);
 
         String subfolderAncestry;
 
@@ -97,6 +88,8 @@ public class FolderController {
             subfolderAncestry = folder.getAncestry() + "/" + folder.getId();
         }
 
+
+        //Delete all folders and their files
         List<Folder> folders = new ArrayList<>();
 
         folders.add(folder);
@@ -126,19 +119,10 @@ public class FolderController {
     }
 
     @PostMapping("/changeName")
-    public ResponseEntity<?> changeFolderName(@RequestParam UUID folderId, @RequestParam String newName, Authentication authentication) {
+    public ResponseEntity<?> changeFolderName(@RequestParam UUID folderId, @RequestParam String newName, Authentication authentication) throws FolderNotFoundException, UnauthorizedException {
 
-        Optional<Folder> optionalFolder = folderRepository.findById(folderId);
 
-        if (optionalFolder.isEmpty()) {
-            return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
-        }
-
-        Folder folder = optionalFolder.get();
-
-        if (!folder.getUser().equals(authentication.getName())) {
-            return new ResponseEntity<>("UNAUTHORIZED", HttpStatus.UNAUTHORIZED);
-        }
+        Folder folder = folderService.getFolder(folderId, authentication);
 
         if (folderRepository.existsByFolderNameAndParentIdAndUser(newName, folder.getParentId(), authentication.getName())) {
             return new ResponseEntity<>("not_unique", HttpStatus.BAD_REQUEST);
@@ -153,24 +137,13 @@ public class FolderController {
     }
 
     @PostMapping("/setFavorite")
-    public ResponseEntity<?> setFavorite(@RequestParam List<UUID> folderIds, @RequestParam boolean value, Authentication authentication) {
+    public ResponseEntity<?> setFavorite(@RequestParam List<UUID> folderIds, @RequestParam boolean value, Authentication authentication) throws FolderNotFoundException, UnauthorizedException {
 
         List<Folder> folders = new ArrayList<>();
 
         for (UUID folderId : folderIds) {
 
-            Optional<Folder> optionalFolder = folderRepository.findById(folderId);
-
-            if (optionalFolder.isEmpty()) {
-                return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
-            }
-
-            Folder folder = optionalFolder.get();
-
-            if (!folder.getUser().equals(authentication.getName())) {
-                return new ResponseEntity<>("UNAUTHORIZED", HttpStatus.UNAUTHORIZED);
-            }
-
+            Folder folder = folderService.getFolder(folderId, authentication);
             folders.add(folder);
         }
 
@@ -191,24 +164,13 @@ public class FolderController {
 
 
     @PostMapping("/transferOptions")
-    public ResponseEntity<?> getTransferOptions(@RequestParam(required = false) UUID folderId, @RequestBody List<UUID> foldersToTransfer, Authentication authentication) {
+    public ResponseEntity<?> getTransferOptions(@RequestParam(required = false) UUID folderId, @RequestBody List<UUID> foldersToTransfer, Authentication authentication) throws FolderNotFoundException, UnauthorizedException {
 
 
         Folder folder = null;
 
         if (folderId != null) {
-
-            Optional<Folder> optionalFolder = folderRepository.findById(folderId);
-
-            if (optionalFolder.isEmpty()) {
-                return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
-            }
-            folder = optionalFolder.get();
-
-            if (!Objects.equals(folder.getUser(), authentication.getName())) {
-                return new ResponseEntity<>("unauthorized", HttpStatus.UNAUTHORIZED);
-            }
-
+            folder = folderService.getFolder(folderId, authentication);
         }
 
 
@@ -219,25 +181,13 @@ public class FolderController {
 
         for (UUID folderToTransferId : foldersToTransfer) {
 
-            Optional<Folder> optionalFolderToTransfer = folderRepository.findById(folderToTransferId);
-
-            if (optionalFolderToTransfer.isEmpty()) {
-                return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
-            }
-            Folder folderToTransfer = optionalFolderToTransfer.get();
-            if (!Objects.equals(folderToTransfer.getUser(), authentication.getName())) {
-                return new ResponseEntity<>("unauthorized", HttpStatus.UNAUTHORIZED);
-            }
-
+            Folder folderToTransfer = folderService.getFolder(folderToTransferId, authentication);
 
             for (TransferFolder transferFolder : transferFolders) {
 
                 if (transferFolder.isCanBeTransferred()) {
-
                     transferFolder.setCanBeTransferred(folderService.canFolderBeTransferred(folderToTransfer, transferFolder.getFolder()));
-
                 }
-
             }
 
         }
@@ -246,29 +196,18 @@ public class FolderController {
 
         TransferFolderResponse transferFolderResponse = new TransferFolderResponse(folder, transferFolders, files);
 
-
         return new ResponseEntity<>(transferFolderResponse, HttpStatus.OK);
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<?> transfer(@RequestParam(required = false) UUID folderId, @RequestBody FolderTransferRequestBody body, Authentication authentication) {
+    public ResponseEntity<?> transfer(@RequestParam(required = false) UUID folderId, @RequestBody FolderTransferRequestBody body, Authentication authentication) throws FolderNotFoundException, UnauthorizedException, FileNotFoundException {
 
 
         Folder folder = null;
 
         if (folderId != null) {
 
-            Optional<Folder> optionalFolder = folderRepository.findById(folderId);
-
-            if (optionalFolder.isEmpty()) {
-                return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
-            }
-            folder = optionalFolder.get();
-            if (!Objects.equals(folder.getUser(), authentication.getName())) {
-                return new ResponseEntity<>("unauthorized", HttpStatus.UNAUTHORIZED);
-            }
-
-
+            folder = folderService.getFolder(folderId,authentication);
         }
 
 
@@ -276,17 +215,7 @@ public class FolderController {
 
         for (UUID folderToTransferId : body.getFolders()) {
 
-            Optional<Folder> optionalFolderToTransfer = folderRepository.findById(folderToTransferId);
-
-            if (optionalFolderToTransfer.isEmpty()) {
-                return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
-            }
-
-            Folder folderToTransfer = optionalFolderToTransfer.get();
-
-            if (!Objects.equals(folderToTransfer.getUser(), authentication.getName())) {
-                return new ResponseEntity<>("unauthorized", HttpStatus.UNAUTHORIZED);
-            }
+            Folder folderToTransfer = folderService.getFolder(folderToTransferId,authentication);
 
             foldersToTransfer.add(folderToTransfer);
         }
@@ -295,30 +224,22 @@ public class FolderController {
 
         for (UUID fileId : body.getFiles()) {
 
-            Optional<FileEntity> optionalFile = fileRepository.findById(fileId);
-
-            if (optionalFile.isEmpty()) {
-                return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
-            }
-
-            FileEntity fileEntity = optionalFile.get();
-
-            if (!Objects.equals(fileEntity.getUser(), authentication.getName())) {
-                return new ResponseEntity<>("unauthorized", HttpStatus.UNAUTHORIZED);
-            }
-
+            FileEntity fileEntity = fileService.getFileEntity(fileId,authentication);
             filesToTransfer.add(fileEntity);
-
         }
 
+
+        //Check if folder can be transferred
         for (Folder folderToTransfer : foldersToTransfer) {
 
-            if(folder!=null && !folderService.canFolderBeTransferred(folderToTransfer,folder)){
+            if (folder != null && !folderService.canFolderBeTransferred(folderToTransfer, folder)) {
                 return new ResponseEntity<>("cant_be_transfered", HttpStatus.UNAUTHORIZED);
             }
         }
 
 
+
+        //Transfer folders and files
         for (Folder folderToTransfer : foldersToTransfer) {
             folderService.transferFolder(folderToTransfer, folder);
         }

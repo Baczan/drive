@@ -5,17 +5,18 @@ import com.baczan.session_authorization_server.dtos.StorageSpaceDTO;
 import com.baczan.session_authorization_server.dtos.ZipFile;
 import com.baczan.session_authorization_server.dtos.ZipFolder;
 import com.baczan.session_authorization_server.entities.*;
+import com.baczan.session_authorization_server.exceptions.FileNotFoundException;
+import com.baczan.session_authorization_server.exceptions.FolderNotFoundException;
 import com.baczan.session_authorization_server.exceptions.TierNotFoundException;
+import com.baczan.session_authorization_server.exceptions.UnauthorizedException;
 import com.baczan.session_authorization_server.repositories.*;
 import com.baczan.session_authorization_server.service.FileService;
+import com.baczan.session_authorization_server.service.FolderService;
 import com.baczan.session_authorization_server.service.StripeService;
-import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,50 +24,48 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLConnection;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/file")
 public class FileController {
 
-    @Autowired
-    private FileService fileService;
+    private final FileService fileService;
 
-    @Autowired
-    private FileRepository fileRepository;
+    private final FileRepository fileRepository;
 
-    @Autowired
-    private FolderRepository folderRepository;
+    private final FolderRepository folderRepository;
 
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private final ZipRepository zipRepository;
 
-    @Autowired
-    private ZipRepository zipRepository;
+    private final StripeService stripeService;
 
-    @Autowired
-    private StripeService stripeService;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private SubscriptionRepository subscriptionRepository;
+    private final FolderService folderService;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    private final ReentrantLock lock = new ReentrantLock();
-
+    public FileController(FileService fileService, FileRepository fileRepository, FolderRepository folderRepository, ZipRepository zipRepository, StripeService stripeService, UserRepository userRepository, FolderService folderService) {
+        this.fileService = fileService;
+        this.fileRepository = fileRepository;
+        this.folderRepository = folderRepository;
+        this.zipRepository = zipRepository;
+        this.stripeService = stripeService;
+        this.userRepository = userRepository;
+        this.folderService = folderService;
+    }
 
     @PostMapping("/upload")
     public ResponseEntity<?> upload(@RequestParam MultipartFile file, @RequestParam(required = false) UUID folderId, Authentication authentication) throws TierNotFoundException {
 
 
+        //Check if there is no conflicting file names
         if (fileRepository.existsByFilenameAndFolderIdAndUser(file.getOriginalFilename(), folderId,authentication.getName())) {
             return new ResponseEntity<>("not_unique", HttpStatus.BAD_REQUEST);
         }
 
+
+        //Check is user have enough space
         User user = userRepository.getUserByEmail(authentication.getName());
 
         StorageSpaceDTO storageSpaceDTO = stripeService.getStorageSpace(user.getEmail());
@@ -75,10 +74,10 @@ public class FileController {
             return new ResponseEntity<>("not_enough_space", HttpStatus.BAD_REQUEST);
         }
 
+
         try {
             return new ResponseEntity<>(fileService.saveFile(file, folderId, authentication,false), HttpStatus.OK);
         } catch (IOException e) {
-            e.printStackTrace();
             return new ResponseEntity<>("io_error", HttpStatus.BAD_REQUEST);
         }
 
@@ -92,6 +91,7 @@ public class FileController {
 
         FilesAndFoldersDTO filesAndFoldersDTO = new FilesAndFoldersDTO(folders, files);
 
+        //Get info about parent folder
         if (folderId != null) {
 
             Optional<Folder> optionalFolder = folderRepository.findById(folderId);
@@ -101,7 +101,6 @@ public class FileController {
             }
 
             filesAndFoldersDTO.setParentFolder(optionalFolder.get());
-
         }
 
         return new ResponseEntity<>(filesAndFoldersDTO, HttpStatus.OK);
@@ -109,19 +108,9 @@ public class FileController {
     }
 
     @GetMapping("/getThumbnail")
-    public ResponseEntity<?> getThumbnail(@RequestParam UUID fileId, Authentication authentication) {
+    public ResponseEntity<?> getThumbnail(@RequestParam UUID fileId, Authentication authentication) throws FileNotFoundException, UnauthorizedException {
 
-        Optional<FileEntity> optionalFile = fileRepository.findById(fileId);
-
-        if (optionalFile.isEmpty()) {
-            return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
-        }
-
-        FileEntity fileEntity = optionalFile.get();
-
-        if (!fileEntity.getUser().equals(authentication.getName())) {
-            return new ResponseEntity<>("UNAUTHORIZED", HttpStatus.UNAUTHORIZED);
-        }
+        FileEntity fileEntity = fileService.getFileEntity(fileId, authentication);
 
         if (!fileEntity.isHasThumbnail()) {
             return new ResponseEntity<>("do_not_have_thumbnail", HttpStatus.BAD_REQUEST);
@@ -158,60 +147,56 @@ public class FileController {
     }
 
     @GetMapping("/downloadMultiple")
-    public ResponseEntity<?> downloadMultiple(@RequestParam List<UUID> filesId, @RequestParam List<UUID> foldersId, @RequestParam(required = false) UUID parentId, Authentication authentication) {
+    public ResponseEntity<?> downloadMultiple(@RequestParam List<UUID> filesId, @RequestParam List<UUID> foldersId, @RequestParam(required = false) UUID parentId, Authentication authentication) throws FolderNotFoundException, UnauthorizedException, FileNotFoundException {
 
         List<ZipFile> zipFiles = new ArrayList<>();
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> folderNames = new HashMap<String, String>();
 
         List<Folder> folders = new ArrayList<>();
 
         for (UUID id : foldersId) {
-
-            Optional<Folder> optionalFolder = folderRepository.findById(id);
-
-            if (optionalFolder.isEmpty()) {
-                return new ResponseEntity<>("error", HttpStatus.BAD_REQUEST);
-            }
-
-            folders.add(optionalFolder.get());
+            folders.add(folderService.getFolder(id,authentication));
         }
 
         int deleteFromAncestry = 0;
 
         if (parentId != null) {
-            Optional<Folder> parentFolderOptional = folderRepository.findById(parentId);
-            if (parentFolderOptional.isEmpty()) {
-                return new ResponseEntity<>("error", HttpStatus.BAD_REQUEST);
-            }
 
-            Folder parentFolder = parentFolderOptional.get();
+            Folder parentFolder = folderService.getFolder(parentId,authentication);
 
+            //Save parent folder
+            folderNames.put(parentFolder.getId().toString(), parentFolder.getFolderName());
+
+
+            //Calculate how many ancestors you have to delete to get relative path
             deleteFromAncestry += 1;
-            map.put(parentFolder.getId().toString(), parentFolder.getFolderName());
 
             if (parentFolder.getAncestry() != null) {
 
                 deleteFromAncestry += parentFolder.getAncestry().split("/").length;
-
             }
 
         }
+
+
 
         List<ZipFolder> zipFolders = new ArrayList<>();
 
         for (Folder folder : folders) {
 
+            //Get all files that are directly in the folder
             List<FileEntity> fileEntities = fileRepository.getAllByFolderId(folder.getId());
 
             for (FileEntity fileEntity:fileEntities) {
-
                 zipFiles.add(new ZipFile(fileEntity,folder.getFolderName()));
-
             }
 
 
-            map.put(folder.getId().toString(), folder.getFolderName());
+            //Save folder name
+            folderNames.put(folder.getId().toString(), folder.getFolderName());
+
+
 
             String subfolderAncestry;
 
@@ -221,13 +206,15 @@ public class FileController {
                 subfolderAncestry = folder.getAncestry() + "/" + folder.getId();
             }
 
+
+            //Get all the sub folders and adjust their ancestry to be relative
             List<Folder> subFolders = folderRepository.getAllByAncestryIsStartingWith(subfolderAncestry);
 
             for (Folder subFolder : subFolders) {
                 List<String> ancestryList = Arrays.asList(subFolder.getAncestry().split("/"));
                 ancestryList = ancestryList.subList(deleteFromAncestry, ancestryList.size());
 
-                map.put(subFolder.getId().toString(), subFolder.getFolderName());
+                folderNames.put(subFolder.getId().toString(), subFolder.getFolderName());
                 zipFolders.add(new ZipFolder(subFolder.getFolderName(), subFolder.getId(), ancestryList));
 
             }
@@ -238,8 +225,10 @@ public class FileController {
 
         for (ZipFolder zipFolder : zipFolders) {
 
-            zipFolder.setAncestryList(zipFolder.getAncestryList().stream().map(map::get).collect(Collectors.toList()));
+            //Map ids of the folders to their names
+            zipFolder.setAncestryList(zipFolder.getAncestryList().stream().map(folderNames::get).collect(Collectors.toList()));
 
+            //Build ancestry based on folder names
             String ancestry="";
 
             for(int i=0;i<zipFolder.getAncestryList().size();i++){
@@ -252,27 +241,23 @@ public class FileController {
 
             ancestry+="/"+zipFolder.getFolderName();
 
+
+            //Add all files of sub folder with their relative ancestry
             List<FileEntity> fileEntities = fileRepository.getAllByFolderId(zipFolder.getId());
 
             for (FileEntity fileEntity:fileEntities) {
-
                 zipFiles.add(new ZipFile(fileEntity,ancestry));
-
             }
 
         }
 
+        //Add files that are not in any folder
         for (UUID id: filesId){
-
-            Optional<FileEntity> optionalFileEntity = fileRepository.findById(id);
-
-            if(optionalFileEntity.isEmpty()){
-                return new ResponseEntity<>("error",HttpStatus.BAD_REQUEST);
-            }
-
-            zipFiles.add(new ZipFile(optionalFileEntity.get(),null));
+            zipFiles.add(new ZipFile(fileService.getFileEntity(id,authentication), null));
         }
 
+
+        //Check authentication of all files
         for (ZipFile zipFile: zipFiles){
 
             if(!authentication.getName().equals(zipFile.getFileEntity().getUser())){
@@ -282,13 +267,15 @@ public class FileController {
         }
 
 
-
+        //Calculate the final size of all files
+        //If the total sum is 0 change it to 1 to avoid dividing by 0
         long filesSize = zipFiles.stream().mapToLong(zipFile -> zipFile.getFileEntity().getSize()).sum();
 
         if(filesSize==0){
             filesSize = 1;
         }
 
+        //Save info about zip and start process in the background
         ZipInfo zipInfo = new ZipInfo(UUID.randomUUID(),authentication.getName(),filesSize);
         zipRepository.save(zipInfo);
 
@@ -298,19 +285,9 @@ public class FileController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<?> download(@RequestParam UUID fileId,@RequestParam(required = false) boolean displayPhoto, Authentication authentication) {
+    public ResponseEntity<?> download(@RequestParam UUID fileId,@RequestParam(required = false) boolean displayPhoto, Authentication authentication) throws FileNotFoundException, UnauthorizedException {
 
-        Optional<FileEntity> optionalFile = fileRepository.findById(fileId);
-
-        if (optionalFile.isEmpty()) {
-            return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
-        }
-
-        FileEntity fileEntity = optionalFile.get();
-
-        if (!fileEntity.getUser().equals(authentication.getName())) {
-            return new ResponseEntity<>("UNAUTHORIZED", HttpStatus.UNAUTHORIZED);
-        }
+        FileEntity fileEntity = fileService.getFileEntity(fileId,authentication);
 
         //Create headers object
         HttpHeaders headers = new HttpHeaders();
@@ -320,7 +297,6 @@ public class FileController {
         if(displayPhoto){
             contentDispositionMode = "inline;";
         }
-
 
         //Set filename
         headers.add(HttpHeaders.CONTENT_DISPOSITION, contentDispositionMode+" filename=" + fileEntity.getFilename());
@@ -392,19 +368,9 @@ public class FileController {
     }
 
     @DeleteMapping("/deleteFile")
-    public ResponseEntity<?> deleteFile(@RequestParam UUID fileId, Authentication authentication){
+    public ResponseEntity<?> deleteFile(@RequestParam UUID fileId, Authentication authentication) throws FileNotFoundException, UnauthorizedException {
 
-        Optional<FileEntity> optionalFile = fileRepository.findById(fileId);
-
-        if (optionalFile.isEmpty()) {
-            return new ResponseEntity<>("not_found", HttpStatus.BAD_REQUEST);
-        }
-
-        FileEntity fileEntity = optionalFile.get();
-
-        if (!fileEntity.getUser().equals(authentication.getName())) {
-            return new ResponseEntity<>("UNAUTHORIZED", HttpStatus.UNAUTHORIZED);
-        }
+        FileEntity fileEntity = fileService.getFileEntity(fileId,authentication);
 
         try {
             fileService.deleteFile(fileEntity);
@@ -419,8 +385,10 @@ public class FileController {
 
     @GetMapping("/storageSpace")
     public ResponseEntity<?> getStorageSpace(Authentication authentication) throws TierNotFoundException {
-
         return new ResponseEntity<>(stripeService.getStorageSpace(authentication.getName()),HttpStatus.OK);
     }
+
+
+
 
 }

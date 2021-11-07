@@ -5,7 +5,9 @@ import com.baczan.session_authorization_server.entities.Authority;
 import com.baczan.session_authorization_server.entities.Folder;
 import com.baczan.session_authorization_server.entities.RegisterToken;
 import com.baczan.session_authorization_server.entities.User;
+import com.baczan.session_authorization_server.exceptions.FolderNotFoundException;
 import com.baczan.session_authorization_server.exceptions.TierNotFoundException;
+import com.baczan.session_authorization_server.exceptions.UnauthorizedException;
 import com.baczan.session_authorization_server.helpers.EmailSender;
 import com.baczan.session_authorization_server.helpers.PasswordValidator;
 import com.baczan.session_authorization_server.helpers.ResponseHelper;
@@ -126,7 +128,7 @@ public class LoginController implements ErrorController {
     @GetMapping("/testLogin")
     public String testLogin(HttpServletRequest request,
                             HttpServletResponse response,
-                            CsrfToken csrfToken) throws TierNotFoundException, IOException {
+                            CsrfToken csrfToken) throws TierNotFoundException, IOException, FolderNotFoundException, UnauthorizedException {
 
         User user = new User();
 
@@ -182,7 +184,7 @@ public class LoginController implements ErrorController {
     }
 
 
-    private void populateTestUserDrive(Authentication authentication) throws IOException, TierNotFoundException {
+    private void populateTestUserDrive(Authentication authentication) throws IOException, TierNotFoundException, FolderNotFoundException, UnauthorizedException {
 
         Folder backupFolder = (Folder) folderController.createFolder("Backup",null,authentication).getBody();
         Folder photoFolder  = (Folder) folderController.createFolder("Zdjęcia",null,authentication).getBody();
