@@ -312,6 +312,13 @@ public class FolderController {
         }
 
         for (Folder folderToTransfer : foldersToTransfer) {
+            if(!folderService.canFolderBeTransferred(folderToTransfer,folder)){
+                return new ResponseEntity<>("cant_be_transfered", HttpStatus.UNAUTHORIZED);
+            }
+        }
+
+
+        for (Folder folderToTransfer : foldersToTransfer) {
             folderService.transferFolder(folderToTransfer, folder);
         }
 
