@@ -3,21 +3,18 @@ package com.baczan.session_authorization_server.controllers;
 import com.baczan.session_authorization_server.dtos.TestFile;
 import com.baczan.session_authorization_server.entities.Authority;
 import com.baczan.session_authorization_server.entities.Folder;
-import com.baczan.session_authorization_server.entities.RegisterToken;
 import com.baczan.session_authorization_server.entities.User;
 import com.baczan.session_authorization_server.exceptions.FolderNotFoundException;
 import com.baczan.session_authorization_server.exceptions.TierNotFoundException;
 import com.baczan.session_authorization_server.exceptions.UnauthorizedException;
-import com.baczan.session_authorization_server.helpers.EmailSender;
-import com.baczan.session_authorization_server.helpers.PasswordValidator;
 import com.baczan.session_authorization_server.helpers.ResponseHelper;
 import com.baczan.session_authorization_server.repositories.FolderRepository;
-import com.baczan.session_authorization_server.repositories.RegisterTokenRepository;
 import com.baczan.session_authorization_server.repositories.UserRepository;
 import com.baczan.session_authorization_server.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.core.env.Environment;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,55 +22,44 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.mail.MessagingException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
-
-import org.springframework.mock.web.MockMultipartFile;
 
 @Controller
 public class LoginController implements ErrorController {
 
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private FolderController folderController;
+    private final FolderController folderController;
 
-    @Autowired
-    private FolderRepository folderRepository;
+    private final FileService fileService;
 
-    @Autowired
-    private FileController fileController;
-
-    @Autowired
-    private FileService fileService;
+    public LoginController(Environment environment, UserRepository userRepository, FolderController folderController, FileService fileService) {
+        this.environment = environment;
+        this.userRepository = userRepository;
+        this.folderController = folderController;
+        this.fileService = fileService;
+    }
 
     @GetMapping("/login")
     private String customLogin(@RequestParam Optional<String> redirectUrl, HttpServletRequest request){
@@ -98,7 +84,6 @@ public class LoginController implements ErrorController {
             redirectUrl = request.getSession().getAttribute("redirectUrl").toString();
         }
 
-
         return "redirect:"+redirectUrl;
     }
 
@@ -111,7 +96,6 @@ public class LoginController implements ErrorController {
         // Delete authentication from context
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
-            System.out.println(auth);
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
 
@@ -125,11 +109,16 @@ public class LoginController implements ErrorController {
         return "redirect:/login";
     }
 
+
+    //Create random user for testing purpose
     @GetMapping("/testLogin")
     public String testLogin(HttpServletRequest request,
                             HttpServletResponse response,
                             CsrfToken csrfToken) throws TierNotFoundException, IOException, FolderNotFoundException, UnauthorizedException {
 
+
+
+        //Create user with random email
         User user = new User();
 
         Random random = new Random();
@@ -159,6 +148,8 @@ public class LoginController implements ErrorController {
                 .build();
 
 
+
+        //Create authentication and put it in security context
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(userDetails,null,authorities);
 
@@ -168,8 +159,14 @@ public class LoginController implements ErrorController {
         HttpSession session = request.getSession(true);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
 
+
+        //Set cookies to be send with a response
         ResponseHelper.setCookies(response,authentication,csrfToken);
 
+        //Give user some files and folders
+        populateTestUserDrive(authentication);
+
+        //Redirect user back to application
         String redirectUrl;
 
         if(request.getSession().getAttribute("redirectUrl") == null){
@@ -177,8 +174,6 @@ public class LoginController implements ErrorController {
         }else{
             redirectUrl = request.getSession().getAttribute("redirectUrl").toString();
         }
-
-        populateTestUserDrive(authentication);
 
         return "redirect:"+redirectUrl;
     }
@@ -188,7 +183,6 @@ public class LoginController implements ErrorController {
 
         Folder backupFolder = (Folder) folderController.createFolder("Backup",null,authentication).getBody();
         Folder photoFolder  = (Folder) folderController.createFolder("Zdjęcia",null,authentication).getBody();
-
         Folder dogFolder = (Folder) folderController.createFolder("Pieski",photoFolder.getId(),authentication).getBody();
         Folder vacationFolder = (Folder) folderController.createFolder("Wakacje 2021",photoFolder.getId(),authentication).getBody();
 

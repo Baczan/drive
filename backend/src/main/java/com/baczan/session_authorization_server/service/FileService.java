@@ -44,31 +44,32 @@ import java.util.zip.ZipOutputStream;
 @Service
 public class FileService {
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
 
-    @Autowired
-    private FileRepository fileRepository;
+    private final FileRepository fileRepository;
 
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    @Autowired
-    private ZipRepository zipRepository;
+    private final ZipRepository zipRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private StripeService stripeService;
-
-    private final ReentrantLock lock = new ReentrantLock();
+    private final StripeService stripeService;
 
     private final List<String> acceptableImageFormats = Arrays.asList(
             "png",
             "jpg",
             "jpeg"
     );
+
+    public FileService(Environment environment, FileRepository fileRepository, SimpMessagingTemplate simpMessagingTemplate, ZipRepository zipRepository, UserRepository userRepository, StripeService stripeService) {
+        this.environment = environment;
+        this.fileRepository = fileRepository;
+        this.simpMessagingTemplate = simpMessagingTemplate;
+        this.zipRepository = zipRepository;
+        this.userRepository = userRepository;
+        this.stripeService = stripeService;
+    }
 
 
     @Transactional
@@ -80,7 +81,6 @@ public class FileService {
         if(fileExtension!=null){
             hasThumbnail= acceptableImageFormats.contains(fileExtension.toLowerCase());
         }
-
 
 
         FileEntity fileEntity = new FileEntity();
@@ -112,9 +112,6 @@ public class FileService {
         fileEntity = fileRepository.save(fileEntity);
 
 
-
-        //saveStorageSpace(authentication.getName(),fileEntity.getSize());
-
         this.userRepository.addStorageSpace(fileEntity.getUser(),fileEntity.getSize());
 
         try {
@@ -135,8 +132,6 @@ public class FileService {
         }
 
         fileRepository.delete(fileEntity);
-
-        //saveStorageSpace(fileEntity.getUser(),-fileEntity.getSize());
 
         this.userRepository.addStorageSpace(fileEntity.getUser(),-fileEntity.getSize());
 

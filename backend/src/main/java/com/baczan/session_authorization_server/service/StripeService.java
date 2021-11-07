@@ -33,23 +33,26 @@ public class StripeService {
     private final ReentrantLock paymentLock = new ReentrantLock();
 
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
-    @Autowired
-    private CardRepository cardRepository;
+    private final CardRepository cardRepository;
 
-    @Autowired
-    private TierService tierService;
+    private final TierService tierService;
 
-    @Autowired
-    private SubscriptionRepository subscriptionRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+    public StripeService(CustomerRepository customerRepository, CardRepository cardRepository, TierService tierService, SubscriptionRepository subscriptionRepository, UserRepository userRepository, SimpMessagingTemplate simpMessagingTemplate) {
+        this.customerRepository = customerRepository;
+        this.cardRepository = cardRepository;
+        this.tierService = tierService;
+        this.subscriptionRepository = subscriptionRepository;
+        this.userRepository = userRepository;
+        this.simpMessagingTemplate = simpMessagingTemplate;
+    }
 
     public Customer getCustomer(Authentication authentication) throws StripeException {
 

@@ -196,8 +196,6 @@ public class FileController {
             //Save folder name
             folderNames.put(folder.getId().toString(), folder.getFolderName());
 
-
-
             String subfolderAncestry;
 
             if (folder.getAncestry() == null) {
@@ -229,24 +227,24 @@ public class FileController {
             zipFolder.setAncestryList(zipFolder.getAncestryList().stream().map(folderNames::get).collect(Collectors.toList()));
 
             //Build ancestry based on folder names
-            String ancestry="";
+            StringBuilder ancestry= new StringBuilder();
 
             for(int i=0;i<zipFolder.getAncestryList().size();i++){
                 if(i!=0){
-                    ancestry+="/";
+                    ancestry.append("/");
                 }
 
-                ancestry+=zipFolder.getAncestryList().get(i);
+                ancestry.append(zipFolder.getAncestryList().get(i));
             }
 
-            ancestry+="/"+zipFolder.getFolderName();
+            ancestry.append("/").append(zipFolder.getFolderName());
 
 
             //Add all files of sub folder with their relative ancestry
             List<FileEntity> fileEntities = fileRepository.getAllByFolderId(zipFolder.getId());
 
             for (FileEntity fileEntity:fileEntities) {
-                zipFiles.add(new ZipFile(fileEntity,ancestry));
+                zipFiles.add(new ZipFile(fileEntity, ancestry.toString()));
             }
 
         }
@@ -387,8 +385,5 @@ public class FileController {
     public ResponseEntity<?> getStorageSpace(Authentication authentication) throws TierNotFoundException {
         return new ResponseEntity<>(stripeService.getStorageSpace(authentication.getName()),HttpStatus.OK);
     }
-
-
-
 
 }

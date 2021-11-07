@@ -1,9 +1,7 @@
 package com.baczan.session_authorization_server.controllers;
 
 
-import com.baczan.session_authorization_server.dtos.CardDTO;
 import com.baczan.session_authorization_server.dtos.subscriptionCreationDOT;
-import com.baczan.session_authorization_server.entities.Card;
 import com.baczan.session_authorization_server.entities.CustomerEntity;
 import com.baczan.session_authorization_server.entities.EventEntity;
 import com.baczan.session_authorization_server.entities.SubscriptionEntity;
@@ -16,58 +14,60 @@ import com.baczan.session_authorization_server.repositories.EventRepository;
 import com.baczan.session_authorization_server.repositories.SubscriptionRepository;
 import com.baczan.session_authorization_server.service.StripeService;
 import com.baczan.session_authorization_server.service.TierService;
+import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.net.Webhook;
-import com.stripe.param.*;
+import com.stripe.param.EventListParams;
+import com.stripe.param.InvoiceUpcomingParams;
+import com.stripe.param.SubscriptionCreateParams;
+import com.stripe.param.SubscriptionUpdateParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import com.stripe.Stripe;
-import com.stripe.exception.SignatureVerificationException;
-
-
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
 public class StripeController {
 
-    @Autowired
-    private StripeService stripeService;
+    private final StripeService stripeService;
 
-    @Autowired
-    private EventRepository eventRepository;
+    private final EventRepository eventRepository;
 
-    @Autowired
-    private TierService tierService;
+    private final TierService tierService;
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
-    @Autowired
-    private CardRepository cardRepository;
+    private final CardRepository cardRepository;
 
-    @Autowired
-    private SubscriptionRepository subscriptionRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
 
+    public StripeController(StripeService stripeService, EventRepository eventRepository, TierService tierService, CustomerRepository customerRepository, CardRepository cardRepository, SubscriptionRepository subscriptionRepository, Environment environment) {
+        this.stripeService = stripeService;
+        this.eventRepository = eventRepository;
+        this.tierService = tierService;
+        this.customerRepository = customerRepository;
+        this.cardRepository = cardRepository;
+        this.subscriptionRepository = subscriptionRepository;
+        this.environment = environment;
+    }
+
+
+    //Setup stripe api key and process missed events
     @PostConstruct
     private void setStripeKey() {
+
         Stripe.apiKey = environment.getProperty("app.stripe.key");
         try {
             getEvents();

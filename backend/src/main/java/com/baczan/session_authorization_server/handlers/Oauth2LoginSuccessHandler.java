@@ -96,7 +96,6 @@ public class Oauth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 
 
 
-
         List<GrantedAuthority> authorities = user.getAuthorities().stream().map(authority -> new SimpleGrantedAuthority(authority.getRole())).collect(Collectors.toList());
 
 
@@ -111,10 +110,7 @@ public class Oauth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                 new UsernamePasswordAuthenticationToken(userDetails,null,authorities);
 
 
-
         securityContext.setAuthentication(newAuthentication);
-
-
 
         response.sendRedirect("http://localhost:8080/afterLogin");
     }

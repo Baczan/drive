@@ -18,8 +18,6 @@ public class FormLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-
         response.sendRedirect("http://localhost:8080/afterLogin");
-
     }
 }

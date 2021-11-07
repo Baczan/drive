@@ -17,8 +17,11 @@ import java.util.UUID;
 @Service
 public class FolderService {
 
-    @Autowired
-    private FolderRepository folderRepository;
+    private final FolderRepository folderRepository;
+
+    public FolderService(FolderRepository folderRepository) {
+        this.folderRepository = folderRepository;
+    }
 
     public boolean canFolderBeTransferred(Folder folderToTransfer,Folder destinationFolder){
 

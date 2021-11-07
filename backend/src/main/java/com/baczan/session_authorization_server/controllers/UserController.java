@@ -26,20 +26,23 @@ import java.util.UUID;
 @Controller
 public class UserController {
 
-    @Autowired
-    private RegisterTokenRepository registerTokenRepository;
+    private final RegisterTokenRepository registerTokenRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordChangeTokenRepository passwordChangeTokenRepository;
+    private final PasswordChangeTokenRepository passwordChangeTokenRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
+    private final EmailSender emailSender;
 
-    @Autowired private EmailSender emailSender;
+    public UserController(RegisterTokenRepository registerTokenRepository, UserRepository userRepository, PasswordChangeTokenRepository passwordChangeTokenRepository, PasswordEncoder passwordEncoder, EmailSender emailSender) {
+        this.registerTokenRepository = registerTokenRepository;
+        this.userRepository = userRepository;
+        this.passwordChangeTokenRepository = passwordChangeTokenRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.emailSender = emailSender;
+    }
 
     @GetMapping("/activate")
     @Transactional
