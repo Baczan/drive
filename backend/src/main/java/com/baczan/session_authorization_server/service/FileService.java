@@ -203,6 +203,10 @@ public class FileService {
                 //Calculate completed zip size
                 zipSizeCompleted+=zipFile.getFileEntity().getSize();
 
+
+                System.out.println(zipSizeCompleted/zipInfo.getSize());
+                System.out.println((float)zipSizeCompleted/zipInfo.getSize());
+
                 zipInfo.setProgress((float)zipSizeCompleted/zipInfo.getSize());
 
                 simpMessagingTemplate.convertAndSendToUser(user, "/queue/zip", zipInfo);

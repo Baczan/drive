@@ -7,6 +7,8 @@ export class IconPipe implements PipeTransform {
 
   icons = {
     ".jpg": "photo",
+    ".jpeg": "photo",
+    ".png": "photo",
     ".txt":"article"
   };
 

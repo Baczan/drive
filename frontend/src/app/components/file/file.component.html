@@ -20,7 +20,7 @@
         </mat-icon>
       </button>
 
-      <button *ngIf="fileService.selectedFolders.length==1 && fileService.selectedFiles.length==0" (click)="changeFolderName()" mat-icon-button matTooltip="Zmień nazwe">
+      <button *ngIf="fileService.selectedFolders.length==1 && fileService.selectedFiles.length==0" (click)="changeFolderName()" mat-icon-button matTooltip="Zmień nazwe folderu">
         <mat-icon class="icon">
           drive_file_rename_outline
         </mat-icon>
@@ -39,11 +39,7 @@
       </button>
 
 
-      <button [matMenuTriggerFor]="menu" mat-icon-button matTooltip="Dodaj plik lub folder">
-        <mat-icon class="icon">
-          add
-        </mat-icon>
-      </button>
+
 
       <button (click)="openTransferDialog()" *ngIf="fileService.transferIconShowing()" mat-icon-button matTooltip="Przenieś plik lub folder">
         <mat-icon class="icon">
@@ -57,6 +53,11 @@
         </mat-icon>
       </button>
 
+      <button [matMenuTriggerFor]="menu" mat-icon-button matTooltip="Dodaj plik lub folder">
+        <mat-icon class="icon">
+          add
+        </mat-icon>
+      </button>
 
 
     </div>

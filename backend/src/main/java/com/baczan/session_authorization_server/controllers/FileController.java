@@ -285,6 +285,10 @@ public class FileController {
 
         long filesSize = zipFiles.stream().mapToLong(zipFile -> zipFile.getFileEntity().getSize()).sum();
 
+        if(filesSize==0){
+            filesSize = 1;
+        }
+
         ZipInfo zipInfo = new ZipInfo(UUID.randomUUID(),authentication.getName(),filesSize);
         zipRepository.save(zipInfo);
 

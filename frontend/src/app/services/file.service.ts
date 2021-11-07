@@ -58,38 +58,44 @@ export class FileService {
 
     websocket.rxStomp.watch("/user/queue/zip").subscribe(response => {
 
-      let zipInfo: ZipInfo = JSON.parse(response.body);
+      //Wait for initial response to be added to list
+      setTimeout(() => {
 
-      let index = this.currentZipFiles.findIndex(zipInfo1 => {
-        return zipInfo1.id == zipInfo.id
-      });
+        let zipInfo: ZipInfo = JSON.parse(response.body);
+        console.log(zipInfo)
+        let index = this.currentZipFiles.findIndex(zipInfo1 => {
+          return zipInfo1.id == zipInfo.id
+        });
 
-      if (index >= 0) {
+        if (index >= 0) {
 
-        this.currentZipFiles[index].error = zipInfo.error;
-        this.currentZipFiles[index].progress = zipInfo.progress;
+          this.currentZipFiles[index].error = zipInfo.error;
+          this.currentZipFiles[index].progress = zipInfo.progress;
 
-        if (zipInfo.completed) {
+          if (zipInfo.completed) {
 
-          const url = `${environment.AUTHORIZATION_SERVER_URL}/api/file/downloadZip?zipId=${zipInfo.id}`;
 
-          let href = this.document.createElement("a");
-          href.download = "true";
-          href.href = url;
-          href.click();
+            const url = `${environment.AUTHORIZATION_SERVER_URL}/api/file/downloadZip?zipId=${zipInfo.id}`;
 
-          this.currentZipFiles.splice(index, 1);
-          this.zipDeleted.emit(true);
+            let href = this.document.createElement("a");
+            href.download = "true";
+            href.href = url;
+            href.click();
+
+            this.currentZipFiles.splice(index, 1);
+            this.zipDeleted.emit(true);
+          }
+
         }
 
-      }
+      }, 1000)
+
 
     })
 
     websocket.rxStomp.watch("/user/queue/storageSpace").subscribe(response => {
 
       this.storageSpace = JSON.parse(response.body);
-      console.log(this.storageSpace)
     })
 
   }
@@ -233,6 +239,8 @@ export class FileService {
       })
 
     }
+
+    this.clearSelection()
   }
 
   shiftSelect(index: number) {
@@ -359,6 +367,8 @@ export class FileService {
 
     this.selectedFolders = [];
 
+    this.clearSelection()
+
   }
 
   deleteFile(fileEntity: FileEntity) {
@@ -370,6 +380,8 @@ export class FileService {
       this.getStorageSpace()
       this.files.splice(this.files.indexOf(fileEntity), 1);
     }, error => {
+
+      //add message
       console.log(error)
     })
 
@@ -386,6 +398,7 @@ export class FileService {
 
       this.getFavoriteFolder()
     }, error => {
+      //add message
       console.log(error)
     })
 
@@ -397,8 +410,8 @@ export class FileService {
 
     this.http.get<StorageSpace>(url).subscribe(response => {
       this.storageSpace = response;
-      console.log(this.storageSpace)
     }, error => {
+      //add message
       console.log(error)
     })
 
@@ -462,6 +475,7 @@ export class FileService {
     this.http.get<Folder[]>(url).subscribe(response => {
       this.favoriteFolders = response;
     }, error => {
+      //add message
       console.log(error)
     })
 
@@ -490,33 +504,32 @@ export class FileService {
   }
 
 
-  transfer(folderId: any){
+  transfer(folderId: any) {
     let url = `${environment.AUTHORIZATION_SERVER_URL}/api/folder/transfer`;
 
     if (folderId) {
       url += "?folderId=" + folderId;
     }
 
-    let body:TransferRequestBody = new TransferRequestBody();
+    let body: TransferRequestBody = new TransferRequestBody();
 
-    body.folders = this.selectedFolders.map(folder=>folder.id);
-    body.files = this.selectedFiles.map(file=>file.id);
+    body.folders = this.selectedFolders.map(folder => folder.id);
+    body.files = this.selectedFiles.map(file => file.id);
 
-    return this.http.post(url,body,{responseType:"text"});
+    return this.http.post(url, body, {responseType: "text"});
   }
 
-  transferIconShowing():boolean{
+  transferIconShowing(): boolean {
 
-    if(!this.currentFolder){
+    if (!this.currentFolder) {
 
-      if(this.selectedFolders.length == this.folders.length){
+      if (this.selectedFolders.length == this.folders.length) {
         return false;
       }
 
     }
 
     return this.selectedFolders.length > 0 || this.selectedFiles.length > 0;
-
   }
 }
 
