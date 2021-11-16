@@ -85,3 +85,9 @@
   text-overflow: ellipsis;
   padding-right: 32px;
 }
+
+@media (max-width: 600px) {
+  .main{
+    margin: 0;
+  }
+}

@@ -302,6 +302,8 @@ public class FileController {
         //Set file type
         headers.add(HttpHeaders.CONTENT_TYPE, URLConnection.guessContentTypeFromName(fileEntity.getFilename()));
 
+        headers.add(HttpHeaders.CACHE_CONTROL,"max-age=86400, no-transform");
+
         try {
             //Read file
             ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(fileService.getPath(fileEntity)));

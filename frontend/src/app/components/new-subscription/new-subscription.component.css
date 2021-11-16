@@ -160,3 +160,9 @@ mat-radio-button{
   height: 100%;
   width: 100%;
 }
+
+@media (max-width: 400px) {
+  .payment{
+    width: 100%;
+  }
+}

@@ -135,9 +135,7 @@ export class FileComponent implements OnInit, AfterViewInit {
   }
 
   openTransferDialog(){
-
     this.dialog.open(TransferDialogComponent)
-
   }
 
 }

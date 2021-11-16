@@ -73,7 +73,7 @@ public class LoginController implements ErrorController {
     public String afterLogin(Authentication authentication, HttpServletResponse response, HttpServletRequest request, CsrfToken csrfToken){
 
         if(authentication!=null){
-            ResponseHelper.setCookies(response,authentication,csrfToken);
+            ResponseHelper.setCookies(response,authentication,csrfToken,environment.getProperty("app.domain"));
         }
 
         String redirectUrl;
@@ -99,7 +99,7 @@ public class LoginController implements ErrorController {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
 
-        ResponseHelper.clearCookies(response);
+        ResponseHelper.clearCookies(response,environment.getProperty("app.domain"));
 
         return "redirect:/login";
     }
@@ -161,7 +161,7 @@ public class LoginController implements ErrorController {
 
 
         //Set cookies to be send with a response
-        ResponseHelper.setCookies(response,authentication,csrfToken);
+        ResponseHelper.setCookies(response,authentication,csrfToken,environment.getProperty("app.domain"));
 
         //Give user some files and folders
         populateTestUserDrive(authentication);

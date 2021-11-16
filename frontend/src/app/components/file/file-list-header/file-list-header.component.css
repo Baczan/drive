@@ -45,3 +45,8 @@
 }
 
 
+@media (max-width: 600px) {
+  .main{
+    margin: 0;
+  }
+}

@@ -5,6 +5,7 @@ import com.baczan.session_authorization_server.entities.User;
 import com.baczan.session_authorization_server.helpers.ResponseHelper;
 import com.baczan.session_authorization_server.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,8 +32,14 @@ import java.util.stream.Collectors;
 @Component
 public class Oauth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    private final Environment env;
+
+    public Oauth2LoginSuccessHandler(UserRepository userRepository, Environment env) {
+        this.userRepository = userRepository;
+        this.env = env;
+    }
 
 
     @Override
@@ -112,7 +119,7 @@ public class Oauth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 
         securityContext.setAuthentication(newAuthentication);
 
-        response.sendRedirect("http://localhost:8080/afterLogin");
+        response.sendRedirect(env.getProperty("app.url")+"/afterLogin");
     }
 }
 

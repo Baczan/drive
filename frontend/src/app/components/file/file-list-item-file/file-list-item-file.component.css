@@ -81,3 +81,9 @@ img{
   padding: 2px;
   border-radius: 100px;
 }
+
+@media (max-width: 600px) {
+  .main{
+    margin: 0;
+  }
+}

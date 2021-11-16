@@ -109,7 +109,7 @@ export class FileListItemFolderComponent implements OnInit {
     }
 
 
-    this.ignoreNextClick = true;
+    //this.ignoreNextClick = true;
 
     if (!this.fileService.touchSelect) {
       this.fileService.touchSelect = true;
@@ -128,9 +128,17 @@ export class FileListItemFolderComponent implements OnInit {
   }
 
 
-  contextMenu(event:MouseEvent){
+  contextMenu(event:Event){
 
     if(this.returnFolder){
+      return;
+    }
+
+    if(!(event instanceof PointerEvent)){
+      return;
+    }
+
+    if(event.pointerType!="mouse"){
       return;
     }
 
