@@ -20,6 +20,8 @@ Project is created with:
 * Material design
 * Favorite folders
 * Image preview
+* Websockets
+* Google and Facebook login
 
 ## Demo
 Demo is available here: [https://dysk.bachanwiktor.pl](https://dysk.bachanwiktor.pl)
